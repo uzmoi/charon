@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // cspell:ignore esbenp
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tombi-toml.tombi", // cspell:ignore tombi
+  },
+}
