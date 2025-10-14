@@ -1,3 +1,5 @@
+import { Zstd } from "@hpcc-js/wasm-zstd";
+import * as brotli from "brotli-wasm";
 import { defineAction } from "./helpers";
 import { t } from "./type";
 
@@ -31,10 +33,12 @@ const inflate = async (
   return pipeStream(data, writable, readable);
 };
 
-const algorithm = t.string("deflate/gzip", [
+const algorithm = t.string("zstd", [
+  "zstd",
   "deflate/raw",
   "deflate/zlib",
   "deflate/gzip",
+  "brotli",
 ]);
 
 export const compressAction = defineAction({
@@ -43,6 +47,12 @@ export const compressAction = defineAction({
   output: { data: t.bytes() },
   async action({ algorithm, data }) {
     switch (algorithm) {
+      case "zstd": {
+        const zstd = await Zstd.load();
+        return {
+          data: zstd.compress(new Uint8Array(data)).buffer as ArrayBuffer,
+        };
+      }
       case "deflate/raw": {
         return { data: await deflate(data, "deflate-raw") };
       }
@@ -51,6 +61,11 @@ export const compressAction = defineAction({
       }
       case "deflate/gzip": {
         return { data: await deflate(data, "gzip") };
+      }
+      case "brotli": {
+        return {
+          data: brotli.compress(new Uint8Array(data)).buffer as ArrayBuffer,
+        };
       }
       default: {
         throw new Error("Unknown algorithm");
@@ -65,6 +80,12 @@ export const decompressAction = defineAction({
   output: { data: t.bytes() },
   async action({ algorithm, data }) {
     switch (algorithm) {
+      case "zstd": {
+        const zstd = await Zstd.load();
+        return {
+          data: zstd.decompress(new Uint8Array(data)).buffer as ArrayBuffer,
+        };
+      }
       case "deflate/raw": {
         return { data: await inflate(data, "deflate-raw") };
       }
@@ -73,6 +94,11 @@ export const decompressAction = defineAction({
       }
       case "deflate/gzip": {
         return { data: await inflate(data, "gzip") };
+      }
+      case "brotli": {
+        return {
+          data: brotli.decompress(new Uint8Array(data)).buffer as ArrayBuffer,
+        };
       }
       default: {
         throw new Error("Unknown algorithm");
