@@ -2,5 +2,5 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "useGitignore": true,
   "ignorePaths": ["pnpm-lock.yaml", "pnpm-workspace.yaml"],
-  "words": ["uzmoi"]
+  "words": ["Keccak", "uzmoi"]
 }
