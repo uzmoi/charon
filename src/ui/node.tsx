@@ -28,7 +28,7 @@ export const CharonNode: preact.FunctionComponent<{
       }}
     >
       <div class={styles.header}>
-        <p class={styles.title}>{node.type}</p>
+        <p class={styles.type}>{node.type}</p>
         <div>
           <button
             popoverTarget={`${node.id}-popover`}

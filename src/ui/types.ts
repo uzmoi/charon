@@ -5,7 +5,7 @@ export interface Vec2 {
 
 export interface Node {
   id: number;
-  pos: Position;
+  type: string;
+  pos: Vec2;
   size: BoxSize;
-  title: string;
 }

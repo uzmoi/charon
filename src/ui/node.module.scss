@@ -3,7 +3,6 @@
   border-radius: 0.5rem;
   border: 1px solid #8000ee;
   background: #2b2b2b;
-  transition: transform 0.25s;
   anchor-scope: --menu-popover;
 }
 
@@ -11,7 +10,7 @@
   display: flex;
 }
 
-.title {
+.type {
   flex: 1 1 0;
   padding-inline: 1ch;
   margin: 0;
