@@ -1,7 +1,7 @@
 import { memo } from "preact/compat";
 import type { Node, Vec2 } from "./types";
 import styles from "./node.module.scss";
-import { GripVerticalIcon } from "lucide-preact";
+import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
 import { useMove } from "./use-move";
 
 const REM = 16;
@@ -9,7 +9,8 @@ const REM = 16;
 export const CharonNode: preact.FunctionComponent<{
   node: Node;
   onMoved: (pos: Vec2) => void;
-}> = memo(({ node, onMoved }) => {
+  onRemove: () => void;
+}> = memo(({ node, onMoved, onRemove }) => {
   const [delta, onPointerDown] = useMove(delta => {
     onMoved({ x: Math.floor(delta.x / REM), y: Math.floor(delta.y / REM) });
   });
@@ -28,12 +29,25 @@ export const CharonNode: preact.FunctionComponent<{
       }}
     >
       <div class={styles.header}>
-        <p class={styles.title}>{node.title}</p>
-        <div
-          class={styles.handle}
-          data-id={node.id}
-          onPointerDown={onPointerDown}
-        >
+        <p class={styles.title}>{node.type}</p>
+        <div>
+          <button
+            popoverTarget={`${node.id}-popover`}
+            class={styles.menu_popover_button}
+          >
+            <MenuIcon />
+          </button>
+          <div
+            popover
+            id={`${node.id}-popover`}
+            class={styles.menu_popover_contents}
+          >
+            <button onClick={onRemove}>
+              <TrashIcon /> Remove Node
+            </button>
+          </div>
+        </div>
+        <div class={styles.handle} onPointerDown={onPointerDown}>
           <GripVerticalIcon size="1.75rem" class={styles.handle_icon} />
         </div>
       </div>

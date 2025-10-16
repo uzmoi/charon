@@ -14,6 +14,10 @@ export const CharonCanvas: preact.FunctionComponent = () => {
     );
   };
 
+  const onRemove = (id: number) => {
+    nodes.value = nodes.value.filter(node => node.id !== id);
+  };
+
   return (
     <div class={module.canvas}>
       <div class={module.nodes}>
@@ -22,6 +26,7 @@ export const CharonCanvas: preact.FunctionComponent = () => {
             key={node.id}
             node={node}
             onMoved={onMoved.bind(null, node.id)}
+            onRemove={onRemove.bind(null, node.id)}
           />
         ))}
       </div>
