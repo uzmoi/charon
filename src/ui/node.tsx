@@ -15,15 +15,14 @@ export const CharonNode: preact.FunctionComponent<{
     onMoved({ x: Math.floor(delta.x / REM), y: Math.floor(delta.y / REM) });
   });
 
-  // TODO: +viewBoxPos
-  const x = node.pos.x + Math.floor(delta.value.x / REM);
-  const y = node.pos.y + Math.floor(delta.value.y / REM);
-
   return (
     <div
       class={styles.node}
       style={{
-        translate: `${x}rem ${y}rem`,
+        // TODO: +viewBoxPos
+        left: `${node.pos.x}rem`,
+        top: `${node.pos.y}rem`,
+        translate: `${Math.floor(delta.value.x / REM)}rem ${Math.floor(delta.value.y / REM)}rem`,
         width: `${node.size.width}rem`,
         height: `${node.size.height}rem`,
       }}
