@@ -4,7 +4,9 @@ import styles from "./node.module.scss";
 import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
 import { useMove } from "./use-move";
 
-const REM = 16;
+const GRID_SIZE_UNIT = 24; // 16 (1rem) * 1.5
+
+const gridSize = (x: number) => `${x * GRID_SIZE_UNIT}px` as const;
 
 export const CharonNode: preact.FunctionComponent<{
   node: Node;
@@ -13,8 +15,8 @@ export const CharonNode: preact.FunctionComponent<{
 }> = memo(({ node, onUpdate, onRemove }) => {
   const [delta, onPointerDown] = useMove(delta => {
     const pos = {
-      x: node.pos.x + Math.floor(delta.x / REM),
-      y: node.pos.y + Math.floor(delta.y / REM),
+      x: node.pos.x + Math.floor(delta.x / GRID_SIZE_UNIT),
+      y: node.pos.y + Math.floor(delta.y / GRID_SIZE_UNIT),
     };
     onUpdate({ ...node, pos });
   });
@@ -24,11 +26,11 @@ export const CharonNode: preact.FunctionComponent<{
       class={styles.node}
       style={{
         // TODO: +viewBoxPos
-        left: `${node.pos.x}rem`,
-        top: `${node.pos.y}rem`,
-        translate: `${Math.floor(delta.value.x / REM)}rem ${Math.floor(delta.value.y / REM)}rem`,
-        width: `${node.size.width}rem`,
-        height: `${node.size.height}rem`,
+        left: gridSize(node.pos.x),
+        top: gridSize(node.pos.y),
+        translate: `${gridSize(Math.floor(delta.value.x / GRID_SIZE_UNIT))} ${gridSize(Math.floor(delta.value.y / GRID_SIZE_UNIT))}`,
+        width: gridSize(node.size.width),
+        height: gridSize(node.size.height),
       }}
     >
       <div class={styles.header}>

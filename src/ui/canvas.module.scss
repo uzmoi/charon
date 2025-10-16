@@ -1,3 +1,5 @@
+$grid-size: 1.5rem;
+
 .canvas {
   width: 100%;
   height: 100%;
@@ -9,7 +11,7 @@
       transparent calc(100% - 1px),
       #888 calc(100% - 1px)
     );
-  background-size: 1rem 1rem;
+  background-size: $grid-size $grid-size;
   background-repeat: repeat;
   background-position: 0 0;
 
