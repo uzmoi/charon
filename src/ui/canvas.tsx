@@ -13,7 +13,7 @@ export const CharonCanvas: preact.FunctionComponent<{
   const addNode = (type: string): void => {
     const newNode: Node = {
       id: Math.floor(Math.random() * 0x1000000),
-      type,
+      action: actions.find(action => action.name === type)!,
       pos: { x: 1, y: 1 },
       size: { width: 8, height: 8 },
     };

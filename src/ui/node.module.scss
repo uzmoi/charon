@@ -10,7 +10,7 @@
   display: flex;
 }
 
-.type {
+.action_name {
   flex: 1 1 0;
   padding-inline: 1ch;
   margin: 0;
@@ -43,5 +43,58 @@
 }
 
 .body {
-  // TODO
+  display: flex;
+  justify-content: space-between;
+}
+
+@mixin pseudoCircle($size) {
+  content: "";
+  display: block;
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+}
+
+$port-size: 12px;
+
+.input {
+  flex: 1 1 0;
+}
+
+.input_item {
+  position: relative;
+  padding-left: 8px;
+  &::before {
+    @include pseudoCircle($port-size);
+    position: absolute;
+    top: calc(50% - $port-size / 2);
+    left: -$port-size / 2;
+    background-color: #8000ee;
+  }
+}
+
+.output {
+  flex: 1 1 0;
+  text-align: right;
+}
+
+.output_item {
+  position: relative;
+  padding-right: 8px;
+  &::before {
+    @include pseudoCircle($port-size);
+    position: absolute;
+    top: calc(50% - $port-size / 2);
+    right: -$port-size / 2;
+    background-color: #8000ee;
+  }
+}
+
+.item_type {
+  color: brown;
+  font-size: 0.75rem;
+}
+
+.item_name {
+  font-size: 0.875rem;
 }

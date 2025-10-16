@@ -1,3 +1,5 @@
+import type { Action } from "../actions";
+
 export interface Vec2 {
   x: number;
   y: number;
@@ -5,7 +7,7 @@ export interface Vec2 {
 
 export interface Node {
   id: number;
-  type: string;
+  action: Action;
   pos: Vec2;
   size: BoxSize;
 }

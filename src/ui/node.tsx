@@ -34,7 +34,7 @@ export const CharonNode: preact.FunctionComponent<{
       }}
     >
       <div class={styles.header}>
-        <p class={styles.type}>{node.type}</p>
+        <p class={styles.action_name}>{node.action.name}</p>
         <div>
           <button
             popoverTarget={`${node.id}-popover`}
@@ -56,7 +56,24 @@ export const CharonNode: preact.FunctionComponent<{
           <GripVerticalIcon size="1.75rem" class={styles.handle_icon} />
         </div>
       </div>
-      <div class={styles.body}></div>
+      <div class={styles.body}>
+        <div class={styles.input}>
+          {Object.entries(node.action.input).map(([name, { name: type }]) => (
+            <div key={name} class={styles.input_item}>
+              <p class={styles.item_type}>{type}</p>
+              <p class={styles.item_name}>{name}</p>
+            </div>
+          ))}
+        </div>
+        <div class={styles.output}>
+          {Object.entries(node.action.output).map(([name, { name: type }]) => (
+            <div key={name} class={styles.output_item}>
+              <p class={styles.item_type}>{type}</p>
+              <p class={styles.item_name}>{name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 });
