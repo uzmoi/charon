@@ -6,12 +6,8 @@ import type { Node, Vec2 } from "./types";
 export const CharonCanvas: preact.FunctionComponent = () => {
   const nodes = useSignal<readonly Node[]>([]);
 
-  const onMoved = (id: number, delta: Vec2) => {
-    nodes.value = nodes.value.map(node =>
-      node.id === id ?
-        { ...node, pos: { x: node.pos.x + delta.x, y: node.pos.y + delta.y } }
-      : node,
-    );
+  const onUpdate = (id: number, newNode: Node) => {
+    nodes.value = nodes.value.map(node => (node.id === id ? newNode : node));
   };
 
   const onRemove = (id: number) => {
@@ -25,7 +21,7 @@ export const CharonCanvas: preact.FunctionComponent = () => {
           <CharonNode
             key={node.id}
             node={node}
-            onMoved={onMoved.bind(null, node.id)}
+            onUpdate={onUpdate.bind(null, node.id)}
             onRemove={onRemove.bind(null, node.id)}
           />
         ))}

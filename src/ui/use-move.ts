@@ -1,6 +1,7 @@
 import { useSignal, useComputed, type ReadonlySignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import type { Vec2 } from "./types";
+import { useEffectEvent } from "./utils";
 
 export const useMove = (
   move: (pos: Vec2) => void,
@@ -19,6 +20,8 @@ export const useMove = (
     grabbing.value = { start, delta: null };
   };
 
+  const moveRef = useEffectEvent(move);
+
   useEffect(() => {
     const onPointerMove = (event: PointerEvent): void => {
       if (grabbing.value == null) return;
@@ -35,7 +38,7 @@ export const useMove = (
     const onPointerUp = (event: PointerEvent): void => {
       if (grabbing.value?.delta == null) return;
 
-      move(grabbing.value.delta);
+      moveRef(grabbing.value.delta);
       grabbing.value = undefined;
     };
 

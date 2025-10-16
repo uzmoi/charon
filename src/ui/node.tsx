@@ -1,5 +1,5 @@
 import { memo } from "preact/compat";
-import type { Node, Vec2 } from "./types";
+import type { Node } from "./types";
 import styles from "./node.module.scss";
 import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
 import { useMove } from "./use-move";
@@ -8,11 +8,15 @@ const REM = 16;
 
 export const CharonNode: preact.FunctionComponent<{
   node: Node;
-  onMoved: (pos: Vec2) => void;
+  onUpdate: (node: Node) => void;
   onRemove: () => void;
-}> = memo(({ node, onMoved, onRemove }) => {
+}> = memo(({ node, onUpdate, onRemove }) => {
   const [delta, onPointerDown] = useMove(delta => {
-    onMoved({ x: Math.floor(delta.x / REM), y: Math.floor(delta.y / REM) });
+    const pos = {
+      x: node.pos.x + Math.floor(delta.x / REM),
+      y: node.pos.y + Math.floor(delta.y / REM),
+    };
+    onUpdate({ ...node, pos });
   });
 
   return (
