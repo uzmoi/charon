@@ -1,3 +1,4 @@
+import { actions } from "./actions";
 import styles from "./app.module.scss";
 import { CharonCanvas } from "./ui/canvas";
 
@@ -7,7 +8,7 @@ export const App: preact.FunctionComponent = () => {
       <header>
         <h1>Charon</h1>
       </header>
-      <CharonCanvas />
+      <CharonCanvas actions={actions} />
     </div>
   );
 };

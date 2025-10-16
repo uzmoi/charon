@@ -4,7 +4,14 @@ type MapCharonType<T extends Record<string, CharonType>> = {
   [P in keyof T]: CharonTypeOf<T[P]>;
 };
 
-export interface Action<
+export interface Action {
+  name: string;
+  input: Record<string, CharonType>;
+  output: Record<string, CharonType>;
+  action: (this: void, input: {}) => Promise<{}>;
+}
+
+interface DefineAction<
   Input extends Record<string, CharonType>,
   Output extends Record<string, CharonType>,
 > {
@@ -21,5 +28,5 @@ export const defineAction = <
   Input extends Record<string, CharonType>,
   Output extends Record<string, CharonType>,
 >(
-  action: Action<Input, Output>,
-) => action;
+  action: DefineAction<Input, Output>,
+): Action => action as unknown as Action;

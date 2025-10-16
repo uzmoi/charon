@@ -1,10 +1,24 @@
 import { useSignal } from "@preact/signals";
 import module from "./canvas.module.scss";
+import type { Action } from "../actions";
 import { CharonNode } from "./node";
-import type { Node, Vec2 } from "./types";
+import { NodeTypeSelector } from "./node-type-selector";
+import type { Node } from "./types";
 
-export const CharonCanvas: preact.FunctionComponent = () => {
+export const CharonCanvas: preact.FunctionComponent<{
+  actions: readonly Action[];
+}> = ({ actions }) => {
   const nodes = useSignal<readonly Node[]>([]);
+
+  const addNode = (type: string): void => {
+    const newNode: Node = {
+      id: Math.floor(Math.random() * 0x1000000),
+      type,
+      pos: { x: 1, y: 1 },
+      size: { width: 8, height: 8 },
+    };
+    nodes.value = [...nodes.value, newNode];
+  };
 
   const onUpdate = (id: number, newNode: Node) => {
     nodes.value = nodes.value.map(node => (node.id === id ? newNode : node));
@@ -16,6 +30,10 @@ export const CharonCanvas: preact.FunctionComponent = () => {
 
   return (
     <div class={module.canvas}>
+      <NodeTypeSelector
+        types={actions.map(action => action.name)}
+        selectType={addNode}
+      />
       <div class={module.nodes}>
         {nodes.value.map(node => (
           <CharonNode
