@@ -1,15 +1,9 @@
+import type { Action } from "../core";
 import type { CharonType, CharonTypeOf } from "./type";
 
 type MapCharonType<T extends Record<string, CharonType>> = {
   [P in keyof T]: CharonTypeOf<T[P]>;
 };
-
-export interface Action {
-  name: string;
-  input: Record<string, CharonType>;
-  output: Record<string, CharonType>;
-  action: (this: void, input: {}) => Promise<{}>;
-}
 
 interface DefineAction<
   Input extends Record<string, CharonType>,

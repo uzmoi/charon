@@ -1,9 +1,8 @@
 import { useSignal } from "@preact/signals";
 import module from "./canvas.module.scss";
-import type { Action } from "../actions";
+import type { Action, Node } from "../core";
 import { CharonNode } from "./node";
 import { NodeTypeSelector } from "./node-type-selector";
-import type { Node } from "./types";
 
 export const CharonCanvas: preact.FunctionComponent<{
   actions: readonly Action[];

@@ -1,5 +1,5 @@
 import { memo } from "preact/compat";
-import type { Node } from "./types";
+import type { Node } from "../core";
 import styles from "./node.module.scss";
 import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
 import { useMove } from "./use-move";

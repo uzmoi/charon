@@ -1,6 +1,6 @@
 import { useSignal, useComputed, type ReadonlySignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import type { Vec2 } from "./types";
+import type { Vec2 } from "../core";
 import { useEffectEvent } from "./utils";
 
 export const useMove = (
