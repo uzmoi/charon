@@ -10,8 +10,8 @@ export interface BoxSize {
 
 export interface Action {
   name: string;
-  input: Record<string, { name: string }>;
-  output: Record<string, { name: string }>;
+  input: ReadonlyMap<string, { name: string }>;
+  output: ReadonlyMap<string, { name: string }>;
   action: (this: void, input: {}) => Promise<{}>;
 }
 

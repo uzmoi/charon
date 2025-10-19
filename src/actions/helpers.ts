@@ -23,4 +23,10 @@ export const defineAction = <
   Output extends Record<string, CharonType>,
 >(
   action: DefineAction<Input, Output>,
-): Action => action as unknown as Action;
+): Action =>
+  ({
+    name: action.name,
+    input: new Map(Object.entries(action.input)),
+    output: new Map(Object.entries(action.output)),
+    action: action.action as unknown as Action["action"],
+  }) as Action;
