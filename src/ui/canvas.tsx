@@ -21,12 +21,7 @@ export const CharonCanvas: preact.FunctionComponent<{
       />
       <div class={styles.nodes}>
         {charon.nodes().map(node => (
-          <CharonNode
-            key={node.id}
-            node={node}
-            onUpdate={charon.updateNode.bind(charon, node.id)}
-            onRemove={charon.removeNode.bind(charon, node.id)}
-          />
+          <CharonNode key={node.id} charon={charon} node={node} />
         ))}
       </div>
     </div>

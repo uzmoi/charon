@@ -1,5 +1,5 @@
 import { memo } from "preact/compat";
-import type { Node } from "../core";
+import type { Charon, Node } from "../core";
 import styles from "./node.module.scss";
 import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
 import { useMove } from "./use-move";
@@ -9,17 +9,20 @@ const GRID_SIZE_UNIT = 24; // 16 (1rem) * 1.5
 const gridSize = (x: number) => `${x * GRID_SIZE_UNIT}px` as const;
 
 export const CharonNode: preact.FunctionComponent<{
+  charon: Charon;
   node: Node;
-  onUpdate: (node: Node) => void;
-  onRemove: () => void;
-}> = memo(({ node, onUpdate, onRemove }) => {
+}> = memo(({ charon, node }) => {
   const [delta, onPointerDown] = useMove(delta => {
     const pos = {
       x: node.pos.x + Math.floor(delta.x / GRID_SIZE_UNIT),
       y: node.pos.y + Math.floor(delta.y / GRID_SIZE_UNIT),
     };
-    onUpdate({ ...node, pos });
+    charon.updateNode(node.id, { ...node, pos });
   });
+
+  const onRemove = () => {
+    charon.removeNode(node.id);
+  };
 
   return (
     <div
