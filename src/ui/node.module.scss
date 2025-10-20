@@ -47,8 +47,7 @@
   justify-content: space-between;
 }
 
-@mixin pseudoCircle($size) {
-  content: "";
+@mixin portCircle($size) {
   display: block;
   width: $size;
   height: $size;
@@ -64,11 +63,11 @@ $port-size: 12px;
 .input_item {
   position: relative;
   padding-left: 8px;
-  &::before {
-    @include pseudoCircle($port-size);
+  .input_item_port {
+    @include portCircle($port-size);
     position: absolute;
     top: calc(50% - $port-size / 2);
-    left: -$port-size / 2;
+    left: calc(-1 * $port-size / 2);
     background-color: #8000ee;
   }
 }
@@ -81,11 +80,11 @@ $port-size: 12px;
 .output_item {
   position: relative;
   padding-right: 8px;
-  &::before {
-    @include pseudoCircle($port-size);
+  .output_item_port {
+    @include portCircle($port-size);
     position: absolute;
     top: calc(50% - $port-size / 2);
-    right: -$port-size / 2;
+    right: calc(-1 * $port-size / 2);
     background-color: #8000ee;
   }
 }

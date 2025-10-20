@@ -1,8 +1,14 @@
-import { memo } from "preact/compat";
-import type { Charon, Node } from "../core";
-import styles from "./node.module.scss";
+import type { Signal } from "@preact/signals";
 import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
-import { useMove } from "./use-move";
+import { memo } from "preact/compat";
+import { inputPorts, outputPorts, type Charon, type Node } from "../core";
+import {
+  startGrabPort,
+  startMove,
+  useGrabbingDelta,
+  type GrabbingState,
+} from "./grabbing";
+import styles from "./node.module.scss";
 
 const GRID_SIZE_UNIT = 24; // 16 (1rem) * 1.5
 
@@ -11,14 +17,9 @@ const gridSize = (x: number) => `${x * GRID_SIZE_UNIT}px` as const;
 export const CharonNode: preact.FunctionComponent<{
   charon: Charon;
   node: Node;
-}> = memo(({ charon, node }) => {
-  const [delta, onPointerDown] = useMove(delta => {
-    const pos = {
-      x: node.pos.x + Math.floor(delta.x / GRID_SIZE_UNIT),
-      y: node.pos.y + Math.floor(delta.y / GRID_SIZE_UNIT),
-    };
-    charon.updateNode(node.id, { ...node, pos });
-  });
+  grabbing: Signal<GrabbingState | undefined>;
+}> = memo(({ charon, node, grabbing }) => {
+  const delta = useGrabbingDelta(grabbing, node.id);
 
   const onRemove = () => {
     charon.removeNode(node.id);
@@ -55,24 +56,32 @@ export const CharonNode: preact.FunctionComponent<{
             </button>
           </div>
         </div>
-        <div class={styles.handle} onPointerDown={onPointerDown}>
+        <div
+          class={styles.handle}
+          onPointerDown={startMove.bind(grabbing, node.id)}
+        >
           <GripVerticalIcon size="1.75rem" class={styles.handle_icon} />
         </div>
       </div>
       <div class={styles.body}>
         <div class={styles.input}>
-          {[...node.action.input].map(([name, { name: type }]) => (
-            <div key={name} class={styles.input_item}>
-              <p class={styles.item_type}>{type}</p>
-              <p class={styles.item_name}>{name}</p>
+          {inputPorts(node).map(port => (
+            <div key={port.name} class={styles.input_item}>
+              <div class={styles.input_item_port} />
+              <p class={styles.item_type}>{port.type}</p>
+              <p class={styles.item_name}>{port.name}</p>
             </div>
           ))}
         </div>
         <div class={styles.output}>
-          {[...node.action.output].map(([name, { name: type }]) => (
-            <div key={name} class={styles.output_item}>
-              <p class={styles.item_type}>{type}</p>
-              <p class={styles.item_name}>{name}</p>
+          {outputPorts(node).map(port => (
+            <div key={port.name} class={styles.output_item}>
+              <div
+                class={styles.output_item_port}
+                onPointerDown={startGrabPort.bind(grabbing, port)}
+              />
+              <p class={styles.item_type}>{port.type}</p>
+              <p class={styles.item_name}>{port.name}</p>
             </div>
           ))}
         </div>
