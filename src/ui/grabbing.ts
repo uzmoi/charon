@@ -1,28 +1,24 @@
 import { useComputed, useSignal, type Signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import type { Charon, NodePort, Vec2 } from "../core";
+import type { Charon, NodeId, NodePort, Vec2 } from "../core";
 import { GRID_SIZE_UNIT } from "./constants";
 
-type GrabbingId = number;
+export type GrabbingSignal = Signal<
+  | ({
+      start: Vec2;
+      delta: Vec2 | null;
+    } & ({ id: NodeId; port?: undefined } | { id: -1; port: NodePort }))
+  | undefined
+>;
 
-export interface GrabbingState {
-  id: GrabbingId;
-  start: Vec2;
-  delta: Vec2 | null;
-  port?: NodePort;
-}
-
-export const useGrabbingDelta = (
-  grabbing: Signal<GrabbingState | undefined>,
-  id: GrabbingId,
-) => {
+export const useGrabbingDelta = (grabbing: GrabbingSignal, id: NodeId) => {
   return useComputed(
     () => (grabbing.value?.id === id && grabbing.value.delta) || { x: 0, y: 0 },
   );
 };
 
-export const useGrabbingSignal = (charon: Charon) => {
-  const grabbing = useSignal<GrabbingState>();
+export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
+  const grabbing = useSignal<GrabbingSignal["value"]>();
 
   useEffect(() => {
     const onPointerMove = (event: PointerEvent): void => {
@@ -68,8 +64,8 @@ export const useGrabbingSignal = (charon: Charon) => {
 };
 
 export function startMove(
-  this: Signal<GrabbingState | undefined>,
-  id: GrabbingId,
+  this: GrabbingSignal,
+  id: NodeId,
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
@@ -78,7 +74,7 @@ export function startMove(
 }
 
 export function startGrabPort(
-  this: Signal<GrabbingState | undefined>,
+  this: GrabbingSignal,
   port: NodePort,
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {

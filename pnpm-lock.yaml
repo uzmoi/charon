@@ -17,6 +17,9 @@ importers:
       '@preact/signals':
         specifier: ^2.3.2
         version: 2.3.2(preact@10.27.2)
+      '@uzmoi/ut':
+        specifier: ^0.1.4
+        version: 0.1.4
       brotli-wasm:
         specifier: ^3.0.1
         version: 3.0.1
@@ -868,6 +871,9 @@ packages:
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
+
+  '@uzmoi/ut@0.1.4':
+    resolution: {integrity: sha512-tEydBU+yQfWkc2mMxbTOf43yKp8h0VhG8WaL9X0R9jork/pC8R+Vgh+xR+ew4rP7ynP1pV+BC7QnBqDxq397RA==}
 
   '@vitest/expect@3.2.4':
     resolution: {integrity: sha512-Io0yyORnB6sikFlt8QW5K7slY4OjqNX9jmJQ02QDda8lyM6B5oNgVWoSoKPac8/kgnCUzuHQKrSLtu/uOqqrig==}
@@ -2444,6 +2450,8 @@ snapshots:
   '@types/deep-eql@4.0.2': {}
 
   '@types/estree@1.0.8': {}
+
+  '@uzmoi/ut@0.1.4': {}
 
   '@vitest/expect@3.2.4':
     dependencies:

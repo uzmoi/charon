@@ -1,4 +1,3 @@
-import type { Signal } from "@preact/signals";
 import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
 import { memo } from "preact/compat";
 import { inputPorts, outputPorts, type Charon, type Node } from "../core";
@@ -11,7 +10,7 @@ import {
   startGrabPort,
   startMove,
   useGrabbingDelta,
-  type GrabbingState,
+  type GrabbingSignal,
 } from "./grabbing";
 import styles from "./node.module.scss";
 
@@ -20,7 +19,7 @@ const gridSize = (x: number) => `${x * GRID_SIZE_UNIT}px` as const;
 export const CharonNode: preact.FunctionComponent<{
   charon: Charon;
   node: Node;
-  grabbing: Signal<GrabbingState | undefined>;
+  grabbing: GrabbingSignal;
 }> = memo(({ charon, node, grabbing }) => {
   const delta = useGrabbingDelta(grabbing, node.id);
 

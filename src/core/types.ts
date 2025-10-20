@@ -1,3 +1,5 @@
+import type { Brand } from "@uzmoi/ut/types";
+
 export interface Vec2 {
   x: number;
   y: number;
@@ -15,8 +17,10 @@ export interface Action {
   action: (this: void, input: {}) => Promise<{}>;
 }
 
+export type NodeId = number & Brand<"Charon.NodeId">;
+
 export interface Node {
-  id: number;
+  id: NodeId;
   action: Action;
   pos: Vec2;
   size: BoxSize;

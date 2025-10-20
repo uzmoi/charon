@@ -15,6 +15,7 @@
   "dependencies": {
     "@hpcc-js/wasm-zstd": "^1.5.1",
     "@preact/signals": "^2.3.2",
+    "@uzmoi/ut": "^0.1.4",
     "brotli-wasm": "^3.0.1",
     "hash-wasm": "^4.12.0",
     "lucide-preact": "^0.545.0",

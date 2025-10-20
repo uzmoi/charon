@@ -1,5 +1,5 @@
 import { signal } from "@preact/signals";
-import type { Action, Node } from "./types";
+import type { Action, Node, NodeId } from "./types";
 
 export class Charon {
   readonly #actions: ReadonlyMap<string, Action>;
@@ -12,7 +12,7 @@ export class Charon {
     this.#actions = new Map(actions.map(action => [action.name, action]));
   }
 
-  #nodes = new Map<number, Node>();
+  #nodes = new Map<NodeId, Node>();
 
   #$nodes = signal<Node[]>([]);
   nodes(): Node[] {
@@ -29,7 +29,7 @@ export class Charon {
     }
     const newNode: Node = {
       // 0x100000000 == 2**32
-      id: Math.floor(Math.random() * 0x100000000),
+      id: Math.floor(Math.random() * 0x100000000) as NodeId,
       action,
       pos: { x: 1, y: 1 },
       size: { width: 8, height: 8 },
@@ -39,16 +39,17 @@ export class Charon {
     return newNode;
   }
 
-  updateNode(id: number, node: Node) {
-    if (!this.#nodes.has(id)) {
+  updateNode(id: NodeId, update: (node: Node) => Node) {
+    const node = this.#nodes.get(id);
+    if (node == null) {
       throw new Error();
     }
 
-    this.#nodes.set(id, node);
+    this.#nodes.set(id, update(node));
     this.#update();
   }
 
-  removeNode(id: number) {
+  removeNode(id: NodeId) {
     if (!this.#nodes.has(id)) return;
 
     this.#nodes.delete(id);
