@@ -1,6 +1,7 @@
 import { useComputed, useSignal, type Signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import type { Charon, NodePort, Vec2 } from "../core";
+import { GRID_SIZE_UNIT } from "./constants";
 
 type GrabbingId = number;
 
@@ -46,8 +47,6 @@ export const useGrabbingSignal = (charon: Charon) => {
         // TODO: 最近傍ポートに接続
       } else {
         charon.updateNode(id, node => {
-          const GRID_SIZE_UNIT = 24; // 16 (1rem) * 1.5
-
           const pos = {
             x: node.pos.x + Math.floor(delta.x / GRID_SIZE_UNIT),
             y: node.pos.y + Math.floor(delta.y / GRID_SIZE_UNIT),

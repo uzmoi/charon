@@ -47,7 +47,7 @@ export const CharonNode: preact.FunctionComponent<{
             popoverTarget={`${node.id}-popover`}
             class={styles.menu_popover_button}
           >
-            <MenuIcon />
+            <MenuIcon size="1.5rem" />
           </button>
           <div
             popover
@@ -63,28 +63,28 @@ export const CharonNode: preact.FunctionComponent<{
           class={styles.handle}
           onPointerDown={startMove.bind(grabbing, node.id)}
         >
-          <GripVerticalIcon size="1.75rem" class={styles.handle_icon} />
+          <GripVerticalIcon size="1.5rem" />
         </div>
       </div>
       <div class={styles.body}>
         <div class={styles.input}>
           {inputPorts(node, NODE_HEADER_HEIGHT, NODE_PORT_HEIGHT).map(port => (
-            <div key={port.name} class={styles.input_item}>
-              <div class={styles.input_item_port} />
-              <p class={styles.item_type}>{port.type}</p>
-              <p class={styles.item_name}>{port.name}</p>
+            <div key={port.name} class={styles.port}>
+              <div class={styles.port_circle} />
+              <p class={styles.port_type}>{port.type}</p>
+              <p class={styles.port_name}>{port.name}</p>
             </div>
           ))}
         </div>
         <div class={styles.output}>
           {outputPorts(node, NODE_HEADER_HEIGHT, NODE_PORT_HEIGHT).map(port => (
-            <div key={port.name} class={styles.output_item}>
+            <div key={port.name} class={styles.port}>
               <div
-                class={styles.output_item_port}
+                class={styles.port_circle}
                 onPointerDown={startGrabPort.bind(grabbing, port)}
               />
-              <p class={styles.item_type}>{port.type}</p>
-              <p class={styles.item_name}>{port.name}</p>
+              <p class={styles.port_type}>{port.type}</p>
+              <p class={styles.port_name}>{port.name}</p>
             </div>
           ))}
         </div>

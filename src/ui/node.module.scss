@@ -1,9 +1,19 @@
+@use "constants";
+
 .node {
   position: absolute;
   border-radius: 0.5rem;
   border: 1px solid #8000ee;
   background: #2b2b2b;
   anchor-scope: --menu-popover;
+}
+
+%only-hover-on-node {
+  transition: opacity 0.25s;
+  opacity: 0;
+  .node:hover & {
+    opacity: 1;
+  }
 }
 
 .header {
@@ -13,13 +23,15 @@
 .action_name {
   flex: 1 1 0;
   padding-inline: 1ch;
-  margin: 0;
   font-size: 1rem;
-  line-height: 2rem;
+  line-height: constants.$grid-size;
 }
 
 .menu_popover_button {
+  @extend %only-hover-on-node;
+  padding: 0.125rem;
   anchor-name: --menu-popover;
+  border: none;
 }
 
 .menu_popover_contents {
@@ -28,72 +40,68 @@
 }
 
 .handle {
+  @extend %only-hover-on-node;
   padding: 0.125rem;
   cursor: move;
   line-height: 1;
-  .handle_icon {
-    vertical-align: top;
-  }
-
-  transition: opacity 0.25s;
-  opacity: 0;
-  .node:hover & {
-    opacity: 1;
-  }
 }
 
 .body {
   display: flex;
   justify-content: space-between;
-}
-
-@mixin portCircle($size) {
-  display: block;
-  width: $size;
-  height: $size;
-  border-radius: 50%;
+  margin-block: constants.$grid-size * 0.5;
 }
 
 $port-size: 12px;
 
 .input {
   flex: 1 1 0;
-}
-
-.input_item {
-  position: relative;
-  padding-left: 8px;
-  .input_item_port {
-    @include portCircle($port-size);
-    position: absolute;
-    top: calc(50% - $port-size / 2);
-    left: calc(-1 * $port-size / 2);
-    background-color: #8000ee;
+  > .port {
+    position: relative;
+    padding-left: 8px;
+    height: constants.$grid-size;
+    > .port_circle {
+      left: calc(-1 * $port-size / 2);
+    }
   }
 }
 
 .output {
   flex: 1 1 0;
   text-align: right;
-}
-
-.output_item {
-  position: relative;
-  padding-right: 8px;
-  .output_item_port {
-    @include portCircle($port-size);
-    position: absolute;
-    top: calc(50% - $port-size / 2);
-    right: calc(-1 * $port-size / 2);
-    background-color: #8000ee;
+  > .port {
+    padding-right: 8px;
+    > .port_circle {
+      right: calc(-1 * $port-size / 2);
+    }
   }
 }
 
-.item_type {
-  color: brown;
-  font-size: 0.75rem;
+.port {
+  position: relative;
+  height: constants.$grid-size;
 }
 
-.item_name {
+.port_circle {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+
+  display: block;
+  width: $port-size;
+  height: $port-size;
+  border-radius: 50%;
+
+  background-color: #8000ee;
+}
+
+.port_type {
+  color: brown;
+  font-size: 0.75rem;
+  line-height: 0.75rem;
+}
+
+.port_name {
   font-size: 0.875rem;
+  line-height: 1rem;
 }
