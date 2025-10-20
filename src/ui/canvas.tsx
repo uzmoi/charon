@@ -17,10 +17,12 @@ export const CharonCanvas: preact.FunctionComponent<{
 
   return (
     <div class={styles.canvas}>
-      <NodeTypeSelector
-        types={actions.map(action => action.name)}
-        selectType={addNode}
-      />
+      <div class={styles.header}>
+        <NodeTypeSelector
+          types={actions.map(action => action.name)}
+          selectType={addNode}
+        />
+      </div>
       <div class={styles.nodes}>
         {charon.nodes().map(node => (
           <CharonNode key={node.id} {...{ charon, node, grabbing }} />

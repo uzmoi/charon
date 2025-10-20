@@ -8,16 +8,36 @@ export interface NodePort {
 }
 
 const nodePorts = (
-  node: Node,
+  node: number,
   ports: ReadonlyMap<string, { name: string }>,
-): IteratorObject<NodePort, void> => {
-  return ports.entries().map(([port, { name: type }]) => {
-    return { pos: node.pos, node: node.id, name: port, type };
-  });
-};
+  f: (index: number) => Vec2,
+): NodePort[] =>
+  ports
+    .entries()
+    .map(([name, { name: type }], index) => ({
+      pos: f(index),
+      node,
+      name,
+      type,
+    }))
+    .toArray();
 
-export const inputPorts = (node: Node): NodePort[] =>
-  nodePorts(node, node.action.input).toArray();
+export const inputPorts = (
+  { id, action, pos }: Node,
+  offset: number,
+  portHeight: number,
+): NodePort[] =>
+  nodePorts(id, action.input, index => ({
+    x: pos.x,
+    y: pos.y + offset + index * portHeight,
+  }));
 
-export const outputPorts = (node: Node): NodePort[] =>
-  nodePorts(node, node.action.output).toArray();
+export const outputPorts = (
+  { id, action, pos, size }: Node,
+  offset: number,
+  portHeight: number,
+): NodePort[] =>
+  nodePorts(id, action.output, index => ({
+    x: pos.x + size.width,
+    y: pos.y + offset + index * portHeight,
+  }));
