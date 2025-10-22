@@ -34,7 +34,7 @@ export const CharonNode: preact.FunctionComponent<{
         // TODO: +viewBoxPos
         left: gridSize(node.pos.x),
         top: gridSize(node.pos.y),
-        translate: `${gridSize(Math.floor(delta.value.x / GRID_SIZE_UNIT))} ${gridSize(Math.floor(delta.value.y / GRID_SIZE_UNIT))}`,
+        translate: `${gridSize(delta.value.x)} ${gridSize(delta.value.y)}`,
         width: gridSize(node.size.width),
         height: gridSize(node.size.height),
       }}

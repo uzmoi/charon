@@ -1,7 +1,6 @@
 import { useComputed } from "@preact/signals";
 import { nearestInputPort, type Charon } from "../core";
 import {
-  GRID_SIZE_UNIT,
   MAXIMUM_CONNECT_DISTANCE,
   NODE_HEADER_HEIGHT,
   NODE_PORT_HEIGHT,
@@ -20,8 +19,8 @@ export const GrabbingEdge: preact.FunctionComponent<{
     if (delta == null) return null;
 
     const cursorPos = {
-      x: port.pos.x + delta.x / GRID_SIZE_UNIT,
-      y: port.pos.y + delta.y / GRID_SIZE_UNIT,
+      x: port.pos.x + delta.x,
+      y: port.pos.y + delta.y,
     };
 
     const targetPort = nearestInputPort(
