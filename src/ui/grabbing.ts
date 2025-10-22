@@ -1,7 +1,18 @@
 import { useComputed, useSignal, type Signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import type { Charon, NodeId, NodePort, Vec2 } from "../core";
-import { GRID_SIZE_UNIT } from "./constants";
+import {
+  nearestInputPort,
+  type Charon,
+  type NodeId,
+  type NodePort,
+  type Vec2,
+} from "../core";
+import {
+  GRID_SIZE_UNIT,
+  MAXIMUM_CONNECT_DISTANCE,
+  NODE_HEADER_HEIGHT,
+  NODE_PORT_HEIGHT,
+} from "./constants";
 
 export type GrabbingSignal = Signal<
   | ({
@@ -36,11 +47,28 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
     const onPointerUp = (_event: PointerEvent): void => {
       if (grabbing.value?.delta == null) return;
 
-      const { id, delta } = grabbing.value;
+      const { id, delta, port } = grabbing.value;
       grabbing.value = undefined;
 
-      if (id === -1) {
-        // TODO: 最近傍ポートに接続
+      if (port) {
+        // 最近傍ポートに接続
+        const cursorPos = {
+          x: port.pos.x + delta.x / GRID_SIZE_UNIT,
+          y: port.pos.y + delta.y / GRID_SIZE_UNIT,
+        };
+
+        const targetPort = nearestInputPort(
+          charon.nodes(),
+          cursorPos,
+          port,
+          NODE_HEADER_HEIGHT,
+          NODE_PORT_HEIGHT,
+          MAXIMUM_CONNECT_DISTANCE,
+        );
+
+        if (targetPort) {
+          charon.connectNodes(port, targetPort);
+        }
       } else {
         charon.updateNode(id, node => {
           const pos = {

@@ -1,5 +1,6 @@
 import { signal } from "@preact/signals";
-import type { Action, Node, NodeId } from "./types";
+import type { NodePort } from "./port";
+import type { Action, Edge, Node, NodeId } from "./types";
 
 export class Charon {
   readonly #actions: ReadonlyMap<string, Action>;
@@ -54,5 +55,17 @@ export class Charon {
 
     this.#nodes.delete(id);
     this.#update();
+  }
+
+  connectNodes(from: NodePort, to: NodePort): Edge {
+    const newEdge: Edge = {
+      id: Math.floor(Math.random() * 0x100000000),
+      from: from.node,
+      fromPort: from.name,
+      to: to.node,
+      toPort: to.name,
+    };
+    // TODO: this.#$edges.value = [...this.#$edges.value, newEdge];
+    return newEdge;
   }
 }

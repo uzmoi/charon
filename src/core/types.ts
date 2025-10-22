@@ -25,3 +25,11 @@ export interface Node {
   pos: Vec2;
   size: BoxSize;
 }
+
+export interface Edge {
+  id: number;
+  from: NodeId;
+  fromPort: string;
+  to: NodeId;
+  toPort: string;
+}

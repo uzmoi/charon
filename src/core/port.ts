@@ -1,14 +1,15 @@
-import type { Node, Vec2 } from "./types";
+import type { Node, NodeId, Vec2 } from "./types";
+import { nearest } from "./utils";
 
 export interface NodePort {
-  node: number;
+  node: NodeId;
   name: string;
   pos: Vec2;
   type: string;
 }
 
 const nodePorts = (
-  node: number,
+  node: NodeId,
   ports: ReadonlyMap<string, { name: string }>,
   f: (index: number) => Vec2,
 ): NodePort[] =>
@@ -41,3 +42,23 @@ export const outputPorts = (
     x: pos.x + size.width,
     y: pos.y + offset + index * portHeight,
   }));
+
+export const nearestInputPort = (
+  nodes: readonly Node[],
+  pos: Vec2,
+  outputPort: NodePort,
+  offset: number,
+  portHeight: number,
+  maximumDistance: number,
+): NodePort | null => {
+  const allInputPorts = nodes.flatMap(node =>
+    inputPorts(node, offset, portHeight),
+  );
+
+  const ports = allInputPorts.filter(
+    inputPort =>
+      inputPort.node !== outputPort.node && inputPort.type === outputPort.type,
+  );
+
+  return nearest(ports, pos, maximumDistance);
+};

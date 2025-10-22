@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 import { Charon, type Action } from "../core";
 import styles from "./canvas.module.scss";
+import { GrabbingEdge } from "./grabbing-edge";
 import { useGrabbingSignal } from "./grabbing";
 import { CharonNode } from "./node";
 import { NodeTypeSelector } from "./node-type-selector";
@@ -23,6 +24,7 @@ export const CharonCanvas: preact.FunctionComponent<{
           selectType={addNode}
         />
       </div>
+      <GrabbingEdge {...{ charon, grabbing }} />
       <div class={styles.nodes}>
         {charon.nodes().map(node => (
           <CharonNode key={node.id} {...{ charon, node, grabbing }} />
