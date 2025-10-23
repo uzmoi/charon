@@ -16,8 +16,12 @@ export class Charon {
   #nodes = new Map<NodeId, Node>();
 
   #$nodes = signal<Node[]>([]);
+  #$edges = signal<Edge[]>([]);
   nodes(): Node[] {
     return this.#$nodes.value;
+  }
+  edges(): Edge[] {
+    return this.#$edges.value;
   }
   #update() {
     this.#$nodes.value = this.#nodes.values().toArray();
@@ -54,6 +58,9 @@ export class Charon {
     if (!this.#nodes.has(id)) return;
 
     this.#nodes.delete(id);
+    this.#$edges.value = this.#$edges.value.filter(
+      edge => edge.from === id || edge.to === id,
+    );
     this.#update();
   }
 
@@ -65,7 +72,7 @@ export class Charon {
       to: to.node,
       toPort: to.name,
     };
-    // TODO: this.#$edges.value = [...this.#$edges.value, newEdge];
+    this.#$edges.value = [...this.#$edges.value, newEdge];
     return newEdge;
   }
 }
