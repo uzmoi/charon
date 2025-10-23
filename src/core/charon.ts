@@ -17,6 +17,9 @@ export class Charon {
 
   #$nodes = signal<Node[]>([]);
   #$edges = signal<Edge[]>([]);
+  node(id: NodeId): Node | undefined {
+    return this.nodes().find(node => node.id === id);
+  }
   nodes(): Node[] {
     return this.#$nodes.value;
   }
@@ -64,15 +67,13 @@ export class Charon {
     this.#update();
   }
 
-  connectNodes(from: NodePort, to: NodePort): Edge {
+  connectNodes(from: NodePort, to: NodePort): void {
     const newEdge: Edge = {
-      id: Math.floor(Math.random() * 0x100000000),
       from: from.node,
       fromPort: from.name,
       to: to.node,
       toPort: to.name,
     };
     this.#$edges.value = [...this.#$edges.value, newEdge];
-    return newEdge;
   }
 }

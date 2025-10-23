@@ -27,7 +27,6 @@ export interface Node {
 }
 
 export interface Edge {
-  id: number;
   from: NodeId;
   fromPort: string;
   to: NodeId;
