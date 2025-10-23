@@ -1,20 +1,26 @@
 import { useComputed } from "@preact/signals";
 import type { Vec2 } from "../core";
 import type { PosEdge } from "./edge-canvas";
-import { useGrabbingDelta, type GrabbingSignal } from "./grabbing";
+import type { GrabbingSignal } from "./grabbing";
 
 export const CharonEdge: preact.FunctionComponent<{
   edge: PosEdge;
   grabbing: GrabbingSignal;
 }> = ({ edge, grabbing }) => {
-  const fromDelta = useGrabbingDelta(grabbing, edge.from);
-  const toDelta = useGrabbingDelta(grabbing, edge.to);
-
   const path = useComputed(() => {
-    return edgePath(
-      { x: edge.p1.x + fromDelta.value.x, y: edge.p1.y + fromDelta.value.y },
-      { x: edge.p2.x + toDelta.value.x, y: edge.p2.y + toDelta.value.y },
-    );
+    let { p1, p2 } = edge;
+
+    if (grabbing.value?.delta) {
+      const { id, delta } = grabbing.value;
+      if (id === edge.from) {
+        p1 = { x: Math.floor(p1.x + delta.x), y: Math.floor(p1.y + delta.y) };
+      }
+      if (id === edge.to) {
+        p2 = { x: Math.floor(p2.x + delta.x), y: Math.floor(p2.y + delta.y) };
+      }
+    }
+
+    return edgePath(p1, p2);
   });
 
   return <path d={path} fill="none" stroke="#1e9124" stroke-width="0.25" />;
