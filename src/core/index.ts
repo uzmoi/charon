@@ -5,4 +5,4 @@ export {
   outputPorts,
   nearestInputPort,
 } from "./port";
-export type { Vec2, BoxSize, Action, NodeId, Node } from "./types";
+export type { Vec2, BoxSize, Action, NodeId, Node, Edge } from "./types";

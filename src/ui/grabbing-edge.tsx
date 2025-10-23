@@ -1,11 +1,10 @@
 import { useComputed } from "@preact/signals";
-import { nearestInputPort, type Charon } from "../core";
+import { nearestInputPort, type Charon, type Vec2 } from "../core";
 import {
   MAXIMUM_CONNECT_DISTANCE,
   NODE_HEADER_HEIGHT,
   NODE_PORT_HEIGHT,
 } from "./constants";
-import { CharonEdge } from "./edge";
 import type { GrabbingSignal } from "./grabbing";
 
 export const GrabbingEdge: preact.FunctionComponent<{
@@ -49,7 +48,12 @@ export const GrabbingEdge: preact.FunctionComponent<{
       viewBox={`0 0 ${maxX} ${maxY}`}
       style="position: absolute;"
     >
-      <CharonEdge from={p1} to={p2} />
+      <path
+        d={edgePath(p1, p2)}
+        fill="none"
+        stroke="#1e9124"
+        stroke-width="0.25"
+      />
       <circle cx={p2.x} cy={p2.y} r="0.25" />
       {p3 && (
         <line
@@ -63,4 +67,9 @@ export const GrabbingEdge: preact.FunctionComponent<{
       )}
     </svg>
   );
+};
+
+const edgePath = (start: Vec2, end: Vec2) => {
+  const x = (start.x + end.x) / 2;
+  return `M${start.x} ${start.y}C${x} ${start.y} ${x} ${end.y} ${end.x} ${end.y}`;
 };

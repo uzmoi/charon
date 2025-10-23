@@ -22,6 +22,11 @@
   position: absolute;
 }
 
+.edges {
+  position: absolute;
+  pointer-events: none;
+}
+
 .nodes {
   height: 100%;
 }
