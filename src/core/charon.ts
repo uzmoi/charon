@@ -1,6 +1,7 @@
 import { signal } from "@preact/signals";
+import { Node, type NodeId } from "./node";
 import type { NodePort } from "./port";
-import type { Action, Edge, Node, NodeId } from "./types";
+import type { Action, Edge } from "./types";
 
 export class Charon {
   readonly #actions: ReadonlyMap<string, Action>;
@@ -18,7 +19,7 @@ export class Charon {
   #$nodes = signal<Node[]>([]);
   #$edges = signal<Edge[]>([]);
   node(id: NodeId): Node | undefined {
-    return this.nodes().find(node => node.id === id);
+    return this.#nodes.get(id);
   }
   nodes(): Node[] {
     return this.#$nodes.value;
@@ -35,26 +36,12 @@ export class Charon {
     if (action == null) {
       throw new TypeError();
     }
-    const newNode: Node = {
-      // 0x100000000 == 2**32
-      id: Math.floor(Math.random() * 0x100000000) as NodeId,
-      action,
-      pos: { x: 1, y: 1 },
-      size: { width: 8, height: 8 },
-    };
+
+    const newNode = new Node(action);
+
     this.#nodes.set(newNode.id, newNode);
     this.#update();
     return newNode;
-  }
-
-  updateNode(id: NodeId, update: (node: Node) => Node) {
-    const node = this.#nodes.get(id);
-    if (node == null) {
-      throw new Error();
-    }
-
-    this.#nodes.set(id, update(node));
-    this.#update();
   }
 
   removeNode(id: NodeId) {

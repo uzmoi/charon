@@ -1,4 +1,4 @@
-import type { Brand } from "@uzmoi/ut/types";
+import type { NodeId } from "./node";
 
 export interface Vec2 {
   x: number;
@@ -15,15 +15,6 @@ export interface Action {
   input: ReadonlyMap<string, { name: string }>;
   output: ReadonlyMap<string, { name: string }>;
   action: (this: void, input: {}) => Promise<{}>;
-}
-
-export type NodeId = number & Brand<"Charon.NodeId">;
-
-export interface Node {
-  id: NodeId;
-  action: Action;
-  pos: Vec2;
-  size: BoxSize;
 }
 
 export interface Edge {

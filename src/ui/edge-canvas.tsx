@@ -17,14 +17,13 @@ export const EdgeCanvas: preact.FunctionComponent<{
   grabbing: GrabbingSignal;
 }> = ({ charon, grabbing }) => {
   const edges = useComputed<PosEdge[]>(() => {
-    return charon.edges().map(({ from, fromPort, to, toPort }): PosEdge => {
-      const key = `${from}#${fromPort}-${to}#${toPort}`;
-
-      const p1 = outputPortPos(charon.node(from)!, fromPort);
-      const p2 = inputPortPos(charon.node(to)!, toPort);
-
-      return { key, from, p1, to, p2 };
-    });
+    return charon.edges().map(({ from, fromPort, to, toPort }) => ({
+      key: `${from}#${fromPort}-${to}#${toPort}`,
+      from: from.id,
+      p1: outputPortPos(from, fromPort),
+      to: to.id,
+      p2: inputPortPos(to, toPort),
+    }));
   });
 
   const edgeMax = useComputed(() => {

@@ -77,13 +77,7 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
           charon.connectNodes(port, targetPort);
         }
       } else {
-        charon.updateNode(id, node => {
-          const pos = {
-            x: Math.floor(node.pos.x + delta.x),
-            y: Math.floor(node.pos.y + delta.y),
-          };
-          return { ...node, pos };
-        });
+        charon.node(id)?.move(delta);
       }
     };
 

@@ -1,4 +1,5 @@
-import type { Node, NodeId, Vec2 } from "./types";
+import type { Node, NodeId } from "./node";
+import type { Vec2 } from "./types";
 import { nearest } from "./utils";
 
 export interface NodePort {
@@ -27,21 +28,25 @@ export const inputPorts = (
   { id, action, pos }: Node,
   offset: number,
   portHeight: number,
-): NodePort[] =>
-  nodePorts(id, action.input, index => ({
-    x: pos.x,
-    y: pos.y + offset + index * portHeight,
+): NodePort[] => {
+  const { x, y } = pos.value;
+  return nodePorts(id, action.input, index => ({
+    x,
+    y: y + offset + index * portHeight,
   }));
+};
 
 export const outputPorts = (
   { id, action, pos, size }: Node,
   offset: number,
   portHeight: number,
-): NodePort[] =>
-  nodePorts(id, action.output, index => ({
-    x: pos.x + size.width,
-    y: pos.y + offset + index * portHeight,
+): NodePort[] => {
+  const { x, y } = pos.value;
+  return nodePorts(id, action.output, index => ({
+    x: x + size.width,
+    y: y + offset + index * portHeight,
   }));
+};
 
 export const nearestInputPort = (
   nodes: readonly Node[],
