@@ -49,7 +49,7 @@ export class Charon {
 
     this.#nodes.delete(id);
     this.#$edges.value = this.#$edges.value.filter(
-      edge => edge.from === id || edge.to === id,
+      edge => edge.from.id === id || edge.to.id === id,
     );
     this.#update();
   }

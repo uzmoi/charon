@@ -1,16 +1,16 @@
-import type { Node, NodeId } from "./node";
+import type { Node } from "./node";
 import type { Vec2 } from "./types";
 import { nearest } from "./utils";
 
 export interface NodePort {
-  node: NodeId;
+  node: Node;
   name: string;
   pos: Vec2;
   type: string;
 }
 
 const nodePorts = (
-  node: NodeId,
+  node: Node,
   ports: ReadonlyMap<string, { name: string }>,
   f: (index: number) => Vec2,
 ): NodePort[] =>
@@ -25,25 +25,25 @@ const nodePorts = (
     .toArray();
 
 export const inputPorts = (
-  { id, action, pos }: Node,
+  node: Node,
   offset: number,
   portHeight: number,
 ): NodePort[] => {
-  const { x, y } = pos.value;
-  return nodePorts(id, action.input, index => ({
+  const { x, y } = node.pos.value;
+  return nodePorts(node, node.action.input, index => ({
     x,
     y: y + offset + index * portHeight,
   }));
 };
 
 export const outputPorts = (
-  { id, action, pos, size }: Node,
+  node: Node,
   offset: number,
   portHeight: number,
 ): NodePort[] => {
-  const { x, y } = pos.value;
-  return nodePorts(id, action.output, index => ({
-    x: x + size.width,
+  const { x, y } = node.pos.value;
+  return nodePorts(node, node.action.output, index => ({
+    x: x + node.size.width,
     y: y + offset + index * portHeight,
   }));
 };

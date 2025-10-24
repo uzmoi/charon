@@ -1,4 +1,4 @@
-import type { NodeId } from "./node";
+import type { Node } from "./node";
 
 export interface Vec2 {
   x: number;
@@ -18,8 +18,8 @@ export interface Action {
 }
 
 export interface Edge {
-  from: NodeId;
+  from: Node;
   fromPort: string;
-  to: NodeId;
+  to: Node;
   toPort: string;
 }
