@@ -48,8 +48,11 @@ export const outputPorts = (
   }));
 };
 
-export const nearestInputPort = (
-  nodes: readonly Node[],
+const isSameTypePort = (a: NodePort, b: NodePort) =>
+  a.node !== b.node && a.type === b.type;
+
+export const nearestPort = (
+  allPorts: readonly NodePort[],
   pos: Vec2,
   outputPort: NodePort,
   offset: number,
@@ -65,5 +68,5 @@ export const nearestInputPort = (
       inputPort.node !== outputPort.node && inputPort.type === outputPort.type,
   );
 
-  return nearest(ports, pos, maximumDistance);
+  return nearest(sameTypePort, pos, maximumDistance);
 };

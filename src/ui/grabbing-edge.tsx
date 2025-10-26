@@ -1,42 +1,25 @@
-import { useComputed } from "@preact/signals";
-import { nearestInputPort, type Charon, type Vec2 } from "../core";
-import {
-  MAXIMUM_CONNECT_DISTANCE,
-  NODE_HEADER_HEIGHT,
-  NODE_PORT_HEIGHT,
-} from "./constants";
+import type { Charon } from "../core";
+import { computePortToConnect, edgePath } from "./compute";
 import type { GrabbingSignal } from "./grabbing";
 
 export const GrabbingEdge: preact.FunctionComponent<{
   charon: Charon;
   grabbing: GrabbingSignal;
 }> = ({ charon, grabbing }) => {
-  const grabbingEdge = useComputed(() => {
-    if (grabbing.value?.port == null) return null;
+  if (grabbing.value?.port == null) return null;
 
-    const { port, delta } = grabbing.value;
-    if (delta == null) return null;
+  const { port, delta } = grabbing.value;
+  if (delta == null) return null;
 
-    const cursorPos = {
-      x: port.pos.x + delta.x,
-      y: port.pos.y + delta.y,
-    };
+  const p1 = port.pos;
 
-    const targetPort = nearestInputPort(
-      charon.nodes(),
-      cursorPos,
-      port,
-      NODE_HEADER_HEIGHT,
-      NODE_PORT_HEIGHT,
-      MAXIMUM_CONNECT_DISTANCE,
-    );
+  // Cursor Position
+  const p2 = {
+    x: p1.x + delta.x,
+    y: p1.y + delta.y,
+  };
 
-    return [port.pos, cursorPos, targetPort?.pos] as const;
-  });
-
-  if (grabbingEdge.value == null) return null;
-
-  const [p1, p2, p3] = grabbingEdge.value;
+  const p3 = computePortToConnect(charon, port, p2)?.pos;
 
   const maxX = Math.ceil(Math.max(p1.x, p2.x, p3?.x ?? 0) + 0.5);
   const maxY = Math.ceil(Math.max(p1.y, p2.y, p3?.y ?? 0) + 0.5);
@@ -67,9 +50,4 @@ export const GrabbingEdge: preact.FunctionComponent<{
       )}
     </svg>
   );
-};
-
-const edgePath = (start: Vec2, end: Vec2) => {
-  const x = (start.x + end.x) / 2;
-  return `M${start.x} ${start.y}C${x} ${start.y} ${x} ${end.y} ${end.x} ${end.y}`;
 };
