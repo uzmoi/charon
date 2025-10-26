@@ -1,3 +1,4 @@
+import { useComputed } from "@preact/signals";
 import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
 import { memo } from "preact/compat";
 import { inputPorts, outputPorts, type Charon, type Node } from "../core";
@@ -6,13 +7,9 @@ import {
   NODE_HEADER_HEIGHT,
   NODE_PORT_HEIGHT,
 } from "./constants";
-import {
-  startGrabPort,
-  startMove,
-  useGrabbingDelta,
-  type GrabbingSignal,
-} from "./grabbing";
+import { startGrabPort, startMove, type GrabbingSignal } from "./grabbing";
 import styles from "./node.module.scss";
+import { css } from "./utils";
 
 const gridSize = (x: number) => `${x * GRID_SIZE_UNIT}px` as const;
 
@@ -21,24 +18,31 @@ export const CharonNode: preact.FunctionComponent<{
   node: Node;
   grabbing: GrabbingSignal;
 }> = memo(({ charon, node, grabbing }) => {
-  const delta = useGrabbingDelta(grabbing, node.id);
-
   const onRemove = () => {
     charon.removeNode(node.id);
   };
 
+  const style = useComputed(() => {
+    const pos = node.pos.value;
+    let delta = { x: 0, y: 0 };
+
+    if (grabbing.value?.delta != null && grabbing.value.id === node.id) {
+      const { x, y } = grabbing.value.delta;
+      delta = { x: Math.floor(x), y: Math.floor(y) };
+    }
+
+    // TODO: +viewBoxPos
+    return css({
+      left: gridSize(pos.x),
+      top: gridSize(pos.y),
+      translate: `${gridSize(delta.x)} ${gridSize(delta.y)}`,
+      width: gridSize(node.size.width),
+      height: gridSize(node.size.height),
+    });
+  });
+
   return (
-    <div
-      class={styles.node}
-      style={{
-        // TODO: +viewBoxPos
-        left: gridSize(node.pos.value.x),
-        top: gridSize(node.pos.value.y),
-        translate: `${gridSize(delta.value.x)} ${gridSize(delta.value.y)}`,
-        width: gridSize(node.size.width),
-        height: gridSize(node.size.height),
-      }}
-    >
+    <div class={styles.node} style={style}>
       <div class={styles.header}>
         <p class={styles.action_name}>{node.action.name}</p>
         <div>

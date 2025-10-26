@@ -1,4 +1,4 @@
-import { useComputed, useSignal, type Signal } from "@preact/signals";
+import { useSignal, type Signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import {
   nearestInputPort,
@@ -23,17 +23,6 @@ export type GrabbingSignal = Signal<
     } & ({ id: NodeId; port?: undefined } | { id: -1; port: NodePort }))
   | undefined
 >;
-
-export const useGrabbingDelta = (grabbing: GrabbingSignal, id: NodeId) => {
-  return useComputed(() => {
-    if (grabbing.value?.delta == null || grabbing.value.id !== id) {
-      return { x: 0, y: 0 };
-    }
-
-    const { x, y } = grabbing.value.delta;
-    return { x: Math.floor(x), y: Math.floor(y) };
-  });
-};
 
 export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
   const grabbing = useSignal<GrabbingSignal["value"]>();

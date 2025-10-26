@@ -12,3 +12,8 @@ export const useEffectEvent = <A extends readonly unknown[], R>(
 
   return useCallback((...args) => ref.current(...args), []);
 };
+
+export const css = (style: preact.CSSProperties) =>
+  Object.entries(style)
+    .map(([key, value]) => `${key}:${value};`)
+    .join("");
