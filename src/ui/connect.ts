@@ -57,11 +57,11 @@ export const computePosOfPortToConnect = (
   switch (portKind) {
     case "in": {
       const outputPort = computeOutputPortToConnect(charon, port, cursorPos);
-      return outputPort && inputPortPos(outputPort.node, outputPort.name);
+      return outputPort && outputPortPos(outputPort.node, outputPort.name);
     }
     case "out": {
       const inputPort = computeInputPortToConnect(charon, port, cursorPos);
-      return inputPort && outputPortPos(inputPort.node, inputPort.name);
+      return inputPort && inputPortPos(inputPort.node, inputPort.name);
     }
   }
 };
