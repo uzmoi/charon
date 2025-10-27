@@ -79,6 +79,7 @@ export const connectToNearestPort = (
       if (outputPort) {
         charon.connectNodes(outputPort, port);
       }
+      break;
     }
     case "out": {
       const inputPort = computeInputPortToConnect(charon, port, current);
@@ -86,6 +87,7 @@ export const connectToNearestPort = (
       if (inputPort) {
         charon.connectNodes(port, inputPort);
       }
+      break;
     }
   }
 };
