@@ -1,5 +1,6 @@
 import type { Charon } from "../core";
-import { computePortToConnect, edgePath } from "./compute";
+import { edgePath } from "./compute";
+import { computeInputPortToConnect } from "./connect";
 import type { GrabbingSignal } from "./grabbing";
 import { inputPortPos } from "./pos";
 
@@ -12,7 +13,7 @@ export const GrabbingEdge: preact.FunctionComponent<{
   const { port, start: p1, current: p2 } = grabbing.value;
   if (p2 == null) return null;
 
-  const portToConnect = computePortToConnect(charon, port, p2);
+  const portToConnect = computeInputPortToConnect(charon, port, p2);
   const p3 =
     portToConnect && inputPortPos(portToConnect.node, portToConnect.name);
 

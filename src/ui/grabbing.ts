@@ -1,7 +1,7 @@
 import { useSignal, type Signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import type { Charon, NodeId, NodePort, Vec2 } from "../core";
-import { computePortToConnect } from "./compute";
+import { connectToNearestPort } from "./connect";
 import { GRID_SIZE_UNIT } from "./constants";
 
 export type GrabbingSignal = Signal<
@@ -34,11 +34,7 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
 
       if (port) {
         // 最近傍ポートに接続
-        const targetPort = computePortToConnect(charon, port, current);
-
-        if (targetPort) {
-          charon.connectNodes(port, targetPort);
-        }
+        connectToNearestPort(charon, port, current);
       } else {
         const delta = {
           x: Math.floor(current.x - Math.round(start.x)),
