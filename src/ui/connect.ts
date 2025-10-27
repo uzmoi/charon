@@ -10,18 +10,16 @@ import {
 import { MAXIMUM_CONNECT_DISTANCE } from "./constants";
 import { inputPortPos, outputPortPos } from "./pos";
 
-const isSameTypePort = (a: NodePort, b: NodePort) =>
-  a.node !== b.node && a.type === b.type;
-
-export const computeInputPortToConnect = (
+const computeInputPortToConnect = (
   charon: Charon,
   outputPort: NodePort,
   cursorPos: Vec2,
 ) => {
   const allInputPorts = charon
     .nodes()
+    .filter(node => node !== outputPort.node)
     .flatMap(inputPorts)
-    .filter(port => isSameTypePort(outputPort, port));
+    .filter(port => port.type === outputPort.type);
 
   const inputPortDistance = (port: NodePort) => {
     const portPos = inputPortPos(port.node, port.name);
@@ -31,15 +29,16 @@ export const computeInputPortToConnect = (
   return nearest(allInputPorts, inputPortDistance, MAXIMUM_CONNECT_DISTANCE);
 };
 
-export const computeOutputPortToConnect = (
+const computeOutputPortToConnect = (
   charon: Charon,
   inputPort: NodePort,
   cursorPos: Vec2,
 ) => {
   const allOutputPorts = charon
     .nodes()
+    .filter(node => node !== inputPort.node)
     .flatMap(outputPorts)
-    .filter(port => isSameTypePort(inputPort, port));
+    .filter(port => port.type === inputPort.type);
 
   const outputPortDistance = (port: NodePort) => {
     const portPos = outputPortPos(port.node, port.name);
@@ -47,6 +46,24 @@ export const computeOutputPortToConnect = (
   };
 
   return nearest(allOutputPorts, outputPortDistance, MAXIMUM_CONNECT_DISTANCE);
+};
+
+export const computePosOfPortToConnect = (
+  charon: Charon,
+  port: NodePort,
+  portKind: "in" | "out",
+  cursorPos: Vec2,
+): Vec2 | null => {
+  switch (portKind) {
+    case "in": {
+      const outputPort = computeOutputPortToConnect(charon, port, cursorPos);
+      return outputPort && inputPortPos(outputPort.node, outputPort.name);
+    }
+    case "out": {
+      const inputPort = computeInputPortToConnect(charon, port, cursorPos);
+      return inputPort && outputPortPos(inputPort.node, inputPort.name);
+    }
+  }
 };
 
 export const connectToNearestPort = (
