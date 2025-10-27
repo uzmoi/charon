@@ -9,6 +9,7 @@ export const EdgeCanvas: preact.FunctionComponent<{
   grabbing: GrabbingSignal;
 }> = ({ charon, grabbing }) => {
   const edgeMax = useComputed(() => {
+    const cursorPos = grabbing.value?.current;
     const edgePoss = charon
       .edges()
       .flatMap(edge => [
@@ -16,9 +17,13 @@ export const EdgeCanvas: preact.FunctionComponent<{
         inputPortPos(edge.to, edge.toPort),
       ]);
 
-    const maxX = Math.ceil(Math.max(0, ...edgePoss.map(pos => pos.x)) + 0.5);
-    const maxY = Math.ceil(Math.max(0, ...edgePoss.map(pos => pos.y)) + 0.5);
-    return { maxX, maxY };
+    const maxX = Math.max(cursorPos?.x ?? 0, ...edgePoss.map(pos => pos.x));
+    const maxY = Math.max(cursorPos?.y ?? 0, ...edgePoss.map(pos => pos.y));
+
+    return {
+      maxX: Math.ceil(maxX + 0.5),
+      maxY: Math.ceil(maxY + 0.5),
+    };
   });
 
   const width = useComputed(() => `${edgeMax.value.maxX * 1.75}rem`);
