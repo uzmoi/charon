@@ -6,21 +6,21 @@ export const distance = (v1: Vec2, v2: Vec2): number => {
   return Math.sqrt(dx * dx + dy * dy);
 };
 
-export const nearest = <T extends { pos: Vec2 }>(
-  ports: Iterable<T>,
-  pos: Vec2,
+export const nearest = <T>(
+  values: Iterable<T>,
+  distance: (value: T) => number,
   maximumDistance = Infinity,
 ): T | null => {
   let nearestDistance = maximumDistance;
-  let nearestPort = null;
+  let nearestValue = null;
 
-  for (const port of ports) {
-    const d = distance(port.pos, pos);
+  for (const value of values) {
+    const d = distance(value);
     if (d < nearestDistance) {
       nearestDistance = d;
-      nearestPort = port;
+      nearestValue = value;
     }
   }
 
-  return nearestPort;
+  return nearestValue;
 };

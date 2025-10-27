@@ -1,6 +1,8 @@
 import type { Charon } from "../core";
 import { computePortToConnect, edgePath } from "./compute";
+import { GRID_SIZE_UNIT } from "./constants";
 import type { GrabbingSignal } from "./grabbing";
+import { inputPortPos } from "./pos";
 
 export const GrabbingEdge: preact.FunctionComponent<{
   charon: Charon;
@@ -8,10 +10,13 @@ export const GrabbingEdge: preact.FunctionComponent<{
 }> = ({ charon, grabbing }) => {
   if (grabbing.value?.port == null) return null;
 
-  const { port, delta } = grabbing.value;
+  const { port, start, delta } = grabbing.value;
   if (delta == null) return null;
 
-  const p1 = port.pos;
+  const p1 = {
+    x: start.x / GRID_SIZE_UNIT,
+    y: start.y / GRID_SIZE_UNIT,
+  };
 
   // Cursor Position
   const p2 = {
@@ -19,7 +24,9 @@ export const GrabbingEdge: preact.FunctionComponent<{
     y: p1.y + delta.y,
   };
 
-  const p3 = computePortToConnect(charon, port, p2)?.pos;
+  const portToConnect = computePortToConnect(charon, port, p2);
+  const p3 =
+    portToConnect && inputPortPos(portToConnect.node, portToConnect.name);
 
   const maxX = Math.ceil(Math.max(p1.x, p2.x, p3?.x ?? 0) + 0.5);
   const maxY = Math.ceil(Math.max(p1.y, p2.y, p3?.y ?? 0) + 0.5);

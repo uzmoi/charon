@@ -33,14 +33,14 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
     const onPointerUp = (_event: PointerEvent): void => {
       if (grabbing.value?.delta == null) return;
 
-      const { id, delta, port } = grabbing.value;
+      const { id, start, delta, port } = grabbing.value;
       grabbing.value = undefined;
 
       if (port) {
         // 最近傍ポートに接続
         const cursorPos = {
-          x: port.pos.x + delta.x,
-          y: port.pos.y + delta.y,
+          x: start.x / GRID_SIZE_UNIT + delta.x,
+          y: start.y / GRID_SIZE_UNIT + delta.y,
         };
         const targetPort = computePortToConnect(charon, port, cursorPos);
 
