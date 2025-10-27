@@ -9,14 +9,8 @@ export const GrabbingEdge: preact.FunctionComponent<{
 }> = ({ charon, grabbing }) => {
   if (grabbing.value?.port == null) return null;
 
-  const { port, start: p1, delta } = grabbing.value;
-  if (delta == null) return null;
-
-  // Cursor Position
-  const p2 = {
-    x: p1.x + delta.x,
-    y: p1.y + delta.y,
-  };
+  const { port, start: p1, current: p2 } = grabbing.value;
+  if (p2 == null) return null;
 
   const portToConnect = computePortToConnect(charon, port, p2);
   const p3 =

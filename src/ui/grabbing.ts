@@ -5,7 +5,7 @@ import { computePortToConnect } from "./compute";
 import { GRID_SIZE_UNIT } from "./constants";
 
 export type GrabbingSignal = Signal<
-  | ({ start: Vec2; delta: Vec2 | null } & (
+  | ({ start: Vec2; current: Vec2 | null } & (
       | { id: NodeId; port?: undefined }
       | { id: -1; port: NodePort }
     ))
@@ -19,33 +19,31 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
     const onPointerMove = (event: PointerEvent): void => {
       if (grabbing.value == null) return;
 
-      const { start } = grabbing.value;
-
-      const delta: Vec2 = {
-        x: event.pageX / GRID_SIZE_UNIT - start.x,
-        y: event.pageY / GRID_SIZE_UNIT - start.y,
+      const current: Vec2 = {
+        x: event.pageX / GRID_SIZE_UNIT,
+        y: event.pageY / GRID_SIZE_UNIT,
       };
-      grabbing.value = { ...grabbing.value, delta };
+      grabbing.value = { ...grabbing.value, current };
     };
 
     const onPointerUp = (_event: PointerEvent): void => {
-      if (grabbing.value?.delta == null) return;
+      if (grabbing.value?.current == null) return;
 
-      const { id, start, delta, port } = grabbing.value;
+      const { id, start, current, port } = grabbing.value;
       grabbing.value = undefined;
 
       if (port) {
         // 最近傍ポートに接続
-        const cursorPos = {
-          x: start.x + delta.x,
-          y: start.y + delta.y,
-        };
-        const targetPort = computePortToConnect(charon, port, cursorPos);
+        const targetPort = computePortToConnect(charon, port, current);
 
         if (targetPort) {
           charon.connectNodes(port, targetPort);
         }
       } else {
+        const delta = {
+          x: Math.floor(current.x - Math.round(start.x)),
+          y: Math.floor(current.y - Math.round(start.y)),
+        };
         charon.node(id)?.move(delta);
       }
     };
@@ -71,7 +69,7 @@ export function startMove(
     x: event.pageX / GRID_SIZE_UNIT,
     y: event.pageY / GRID_SIZE_UNIT,
   };
-  this.value = { id, start, delta: null };
+  this.value = { id, start, current: null };
 }
 
 export function startGrabPort(
@@ -84,5 +82,5 @@ export function startGrabPort(
     x: Math.round(event.pageX / GRID_SIZE_UNIT),
     y: Math.round(event.pageY / GRID_SIZE_UNIT),
   };
-  this.value = { id: -1, port, start, delta: null };
+  this.value = { id: -1, port, start, current: null };
 }

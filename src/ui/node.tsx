@@ -22,9 +22,12 @@ export const CharonNode: preact.FunctionComponent<{
     const pos = node.pos.value;
     let delta = { x: 0, y: 0 };
 
-    if (grabbing.value?.delta != null && grabbing.value.id === node.id) {
-      const { x, y } = grabbing.value.delta;
-      delta = { x: Math.floor(x), y: Math.floor(y) };
+    if (grabbing.value?.current != null && grabbing.value.id === node.id) {
+      const { start, current } = grabbing.value;
+      delta = {
+        x: Math.floor(current.x - Math.round(start.x)),
+        y: Math.floor(current.y - Math.round(start.y)),
+      };
     }
 
     // TODO: +viewBoxPos
