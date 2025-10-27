@@ -36,11 +36,10 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
         // 最近傍ポートに接続
         connectToNearestPort(charon, portKind, port, current);
       } else {
-        const delta = {
-          x: Math.floor(current.x - Math.round(start.x)),
-          y: Math.floor(current.y - Math.round(start.y)),
-        };
-        charon.node(id)?.move(delta);
+        charon.node(id)?.move({
+          x: Math.round(current.x - start.x),
+          y: Math.round(current.y - start.y),
+        });
       }
     };
 

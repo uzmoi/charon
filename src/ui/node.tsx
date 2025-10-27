@@ -30,8 +30,8 @@ export const CharonNode: preact.FunctionComponent<{
     if (grabbing.value?.current != null && grabbing.value.id === node.id) {
       const { start, current } = grabbing.value;
       delta = {
-        x: Math.floor(current.x - Math.round(start.x)),
-        y: Math.floor(current.y - Math.round(start.y)),
+        x: Math.round(current.x - start.x),
+        y: Math.round(current.y - start.y),
       };
     }
 
