@@ -1,8 +1,11 @@
 import type { Charon } from "../core";
 import { edgePath } from "./compute";
-import { computeInputPortToConnect } from "./connect";
+import {
+  computeInputPortToConnect,
+  computeOutputPortToConnect,
+} from "./connect";
 import type { GrabbingSignal } from "./grabbing";
-import { inputPortPos } from "./pos";
+import { inputPortPos, outputPortPos } from "./pos";
 
 export const GrabbingEdge: preact.FunctionComponent<{
   charon: Charon;
@@ -10,12 +13,18 @@ export const GrabbingEdge: preact.FunctionComponent<{
 }> = ({ charon, grabbing }) => {
   if (grabbing.value?.port == null) return null;
 
-  const { port, start: p1, current: p2 } = grabbing.value;
+  const { port, portKind, start: p1, current: p2 } = grabbing.value;
   if (p2 == null) return null;
 
-  const portToConnect = computeInputPortToConnect(charon, port, p2);
+  const portToConnect =
+    portKind === "in" ?
+      computeOutputPortToConnect(charon, port, p2)
+    : computeInputPortToConnect(charon, port, p2);
   const p3 =
-    portToConnect && inputPortPos(portToConnect.node, portToConnect.name);
+    portToConnect &&
+    (portKind === "in" ?
+      inputPortPos(portToConnect.node, portToConnect.name)
+    : outputPortPos(portToConnect.node, portToConnect.name));
 
   const maxX = Math.ceil(Math.max(p1.x, p2.x, p3?.x ?? 0) + 0.5);
   const maxY = Math.ceil(Math.max(p1.y, p2.y, p3?.y ?? 0) + 0.5);

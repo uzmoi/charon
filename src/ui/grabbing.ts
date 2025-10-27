@@ -6,8 +6,8 @@ import { GRID_SIZE_UNIT } from "./constants";
 
 export type GrabbingSignal = Signal<
   | ({ start: Vec2; current: Vec2 | null } & (
-      | { id: NodeId; port?: undefined }
-      | { id: -1; port: NodePort }
+      | { id: NodeId; port?: undefined; portKind?: undefined }
+      | { id: -1; port: NodePort; portKind: "in" | "out" }
     ))
   | undefined
 >;
@@ -29,12 +29,12 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
     const onPointerUp = (_event: PointerEvent): void => {
       if (grabbing.value?.current == null) return;
 
-      const { id, start, current, port } = grabbing.value;
+      const { id, start, current, port, portKind } = grabbing.value;
       grabbing.value = undefined;
 
       if (port) {
         // 最近傍ポートに接続
-        connectToNearestPort(charon, port, current);
+        connectToNearestPort(charon, portKind, port, current);
       } else {
         const delta = {
           x: Math.floor(current.x - Math.round(start.x)),
@@ -68,7 +68,7 @@ export function startMove(
   this.value = { id, start, current: null };
 }
 
-export function startGrabPort(
+export function startGrabInputPort(
   this: GrabbingSignal,
   port: NodePort,
   event: preact.TargetedPointerEvent<HTMLElement>,
@@ -78,5 +78,18 @@ export function startGrabPort(
     x: Math.round(event.pageX / GRID_SIZE_UNIT),
     y: Math.round(event.pageY / GRID_SIZE_UNIT),
   };
-  this.value = { id: -1, port, start, current: null };
+  this.value = { id: -1, port, portKind: "in", start, current: null };
+}
+
+export function startGrabOutputPort(
+  this: GrabbingSignal,
+  port: NodePort,
+  event: preact.TargetedPointerEvent<HTMLElement>,
+): void {
+  event.preventDefault();
+  const start: Vec2 = {
+    x: Math.round(event.pageX / GRID_SIZE_UNIT),
+    y: Math.round(event.pageY / GRID_SIZE_UNIT),
+  };
+  this.value = { id: -1, port, portKind: "out", start, current: null };
 }
