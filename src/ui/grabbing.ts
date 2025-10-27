@@ -5,12 +5,10 @@ import { computePortToConnect } from "./compute";
 import { GRID_SIZE_UNIT } from "./constants";
 
 export type GrabbingSignal = Signal<
-  | ({
-      /** px 単位 */
-      start: Vec2;
-      /** グリット単位 */
-      delta: Vec2 | null;
-    } & ({ id: NodeId; port?: undefined } | { id: -1; port: NodePort }))
+  | ({ start: Vec2; delta: Vec2 | null } & (
+      | { id: NodeId; port?: undefined }
+      | { id: -1; port: NodePort }
+    ))
   | undefined
 >;
 
@@ -24,8 +22,8 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
       const { start } = grabbing.value;
 
       const delta: Vec2 = {
-        x: (event.pageX - start.x) / GRID_SIZE_UNIT,
-        y: (event.pageY - start.y) / GRID_SIZE_UNIT,
+        x: event.pageX / GRID_SIZE_UNIT - start.x,
+        y: event.pageY / GRID_SIZE_UNIT - start.y,
       };
       grabbing.value = { ...grabbing.value, delta };
     };
@@ -39,8 +37,8 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
       if (port) {
         // 最近傍ポートに接続
         const cursorPos = {
-          x: start.x / GRID_SIZE_UNIT + delta.x,
-          y: start.y / GRID_SIZE_UNIT + delta.y,
+          x: start.x + delta.x,
+          y: start.y + delta.y,
         };
         const targetPort = computePortToConnect(charon, port, cursorPos);
 
@@ -69,7 +67,10 @@ export function startMove(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
-  const start: Vec2 = { x: event.pageX, y: event.pageY };
+  const start: Vec2 = {
+    x: event.pageX / GRID_SIZE_UNIT,
+    y: event.pageY / GRID_SIZE_UNIT,
+  };
   this.value = { id, start, delta: null };
 }
 
@@ -79,6 +80,9 @@ export function startGrabPort(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
-  const start: Vec2 = { x: event.pageX, y: event.pageY };
+  const start: Vec2 = {
+    x: Math.round(event.pageX / GRID_SIZE_UNIT),
+    y: Math.round(event.pageY / GRID_SIZE_UNIT),
+  };
   this.value = { id: -1, port, start, delta: null };
 }
