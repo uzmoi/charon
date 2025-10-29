@@ -3,6 +3,7 @@ import { useEffect } from "preact/hooks";
 import type { Charon, NodeId, NodePort, Vec2 } from "../core";
 import { connectToNearestPort } from "./connect";
 import { GRID_SIZE_UNIT } from "./constants";
+import { inputPortPos, outputPortPos } from "./pos";
 
 export type GrabbingSignal = Signal<
   | ({ start: Vec2; current: Vec2 | null } & (
@@ -69,6 +70,7 @@ export function startMove(
 
 export function startGrabInputPort(
   this: GrabbingSignal,
+  charon: Charon,
   port: NodePort,
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
@@ -77,11 +79,33 @@ export function startGrabInputPort(
     x: Math.round(event.pageX / GRID_SIZE_UNIT),
     y: Math.round(event.pageY / GRID_SIZE_UNIT),
   };
-  this.value = { id: -1, port, portKind: "in", start, current: null };
+
+  const outputPort = charon.disconnectByEdgeTo(port);
+
+  if (outputPort) {
+    // 既存のedgeを引っ張る
+    const outputPortPos_ = outputPortPos(outputPort.node, outputPort.name);
+    const inputPortPos_ = inputPortPos(port.node, port.name);
+    const outputPos: Vec2 = {
+      x: start.x - inputPortPos_.x + outputPortPos_.x,
+      y: start.y - inputPortPos_.y + outputPortPos_.y,
+    };
+    this.value = {
+      id: -1,
+      port: outputPort,
+      portKind: "out",
+      start: outputPos,
+      current: start,
+    };
+  } else {
+    // 新規にedgeを引っ張る
+    this.value = { id: -1, port, portKind: "in", start, current: null };
+  }
 }
 
 export function startGrabOutputPort(
   this: GrabbingSignal,
+  charon: Charon,
   port: NodePort,
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
@@ -90,5 +114,26 @@ export function startGrabOutputPort(
     x: Math.round(event.pageX / GRID_SIZE_UNIT),
     y: Math.round(event.pageY / GRID_SIZE_UNIT),
   };
-  this.value = { id: -1, port, portKind: "out", start, current: null };
+
+  const inputPort = charon.disconnectByEdgeFrom(port);
+
+  if (inputPort) {
+    // 既存のedgeを引っ張る
+    const inputPortPos_ = inputPortPos(inputPort.node, inputPort.name);
+    const outputPortPos_ = outputPortPos(port.node, port.name);
+    const inputPos: Vec2 = {
+      x: start.x - outputPortPos_.x + inputPortPos_.x,
+      y: start.y - outputPortPos_.y + inputPortPos_.y,
+    };
+    this.value = {
+      id: -1,
+      port: inputPort,
+      portKind: "in",
+      start: inputPos,
+      current: start,
+    };
+  } else {
+    // 新規にedgeを引っ張る
+    this.value = { id: -1, port, portKind: "out", start, current: null };
+  }
 }

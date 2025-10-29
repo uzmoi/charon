@@ -79,7 +79,7 @@ export const CharonNode: preact.FunctionComponent<{
             <div key={port.name} class={styles.port}>
               <div
                 class={styles.port_circle}
-                onPointerDown={startGrabInputPort.bind(grabbing, port)}
+                onPointerDown={startGrabInputPort.bind(grabbing, charon, port)}
               />
               <p class={styles.port_type}>{port.type}</p>
               <p class={styles.port_name}>{port.name}</p>
@@ -91,7 +91,7 @@ export const CharonNode: preact.FunctionComponent<{
             <div key={port.name} class={styles.port}>
               <div
                 class={styles.port_circle}
-                onPointerDown={startGrabOutputPort.bind(grabbing, port)}
+                onPointerDown={startGrabOutputPort.bind(grabbing, charon, port)}
               />
               <p class={styles.port_type}>{port.type}</p>
               <p class={styles.port_name}>{port.name}</p>
