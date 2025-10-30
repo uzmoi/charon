@@ -1,5 +1,4 @@
 import type { Node } from "./node";
-import type { Vec2 } from "./types";
 
 export type NodePort<T extends "in" | "out"> =
   T extends T ?

@@ -1,6 +1,6 @@
-import type { Vec2 } from "./types";
+import type { ReadonlyVec2 } from "./vec2";
 
-export const distance = (v1: Vec2, v2: Vec2): number => {
+export const distance = (v1: ReadonlyVec2, v2: ReadonlyVec2): number => {
   const dx = v1.x - v2.x;
   const dy = v1.y - v2.y;
   return Math.sqrt(dx * dx + dy * dy);

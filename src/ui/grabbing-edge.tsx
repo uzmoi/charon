@@ -13,12 +13,7 @@ export const GrabbingEdge: preact.FunctionComponent<{
   if (delta == null) return null;
 
   const p1 = computePortPos(port);
-
-  const p2 = {
-    x: p1.x + delta.x,
-    y: p1.y + delta.y,
-  };
-
+  const p2 = p1.copy().plus(delta);
   const p3 = computePosOfPortToConnect(charon, port, p2);
 
   const maxX = Math.ceil(Math.max(p1.x, p2.x, p3?.x ?? 0) + 0.5);

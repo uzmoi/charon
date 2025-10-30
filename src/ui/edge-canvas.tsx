@@ -13,11 +13,7 @@ export const EdgeCanvas: preact.FunctionComponent<{
       if (grabbing.value == null) return null;
       const { port, delta } = grabbing.value;
       if (port == null || delta == null) return null;
-      const portPos = computePortPos(port);
-      return {
-        x: portPos.x + delta.x,
-        y: portPos.y + delta.y,
-      };
+      return computePortPos(port).plus(delta);
     })();
     const edgePoss = charon
       .edges()

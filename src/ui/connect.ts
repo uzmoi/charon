@@ -7,6 +7,7 @@ import {
   type Charon,
   type Node,
   type NodePort,
+  type ReadonlyVec2,
   type Vec2,
 } from "../core";
 import { computePortPos } from "./compute";
@@ -50,13 +51,10 @@ export const computePosOfPortToConnect = (
 export const connectToNearestPort = (
   charon: Charon,
   port: NodePort<"in" | "out">,
-  delta: Vec2,
+  delta: ReadonlyVec2,
 ) => {
   const portPos = computePortPos(port);
-  const portToConnect = computePortToConnect(charon, port, {
-    x: portPos.x + delta.x,
-    y: portPos.y + delta.y,
-  });
+  const portToConnect = computePortToConnect(charon, port, portPos.plus(delta));
 
   if (portToConnect) {
     switch (port.kind) {

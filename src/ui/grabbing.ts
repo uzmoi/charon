@@ -1,12 +1,18 @@
 import { useSignal, type Signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import type { Charon, NodeId, NodePort, Vec2 } from "../core";
+import {
+  Vec2,
+  type Charon,
+  type NodeId,
+  type NodePort,
+  type ReadonlyVec2,
+} from "../core";
 import { computePortPos } from "./compute";
 import { connectToNearestPort } from "./connect";
 import { GRID_SIZE_UNIT } from "./constants";
 
 export type GrabbingSignal = Signal<
-  | ({ start: Vec2; delta: Vec2 | null } & (
+  | ({ start: ReadonlyVec2; delta: ReadonlyVec2 | null } & (
       | { id: NodeId; port?: undefined; portKind?: undefined }
       | { id: -1; port: NodePort<"in" | "out"> }
     ))
@@ -22,10 +28,10 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
 
       const { start } = grabbing.value;
 
-      const delta: Vec2 = {
-        x: event.pageX / GRID_SIZE_UNIT - start.x,
-        y: event.pageY / GRID_SIZE_UNIT - start.y,
-      };
+      const delta = new Vec2(
+        event.pageX / GRID_SIZE_UNIT,
+        event.pageY / GRID_SIZE_UNIT,
+      ).minus(start);
       grabbing.value = { ...grabbing.value, delta };
     };
 
@@ -63,10 +69,10 @@ export function startMove(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
-  const start: Vec2 = {
-    x: event.pageX / GRID_SIZE_UNIT,
-    y: event.pageY / GRID_SIZE_UNIT,
-  };
+  const start = new Vec2(
+    event.pageX / GRID_SIZE_UNIT,
+    event.pageY / GRID_SIZE_UNIT,
+  );
   this.value = { id, start, delta: null };
 }
 
@@ -77,26 +83,18 @@ export function startGrabInputPort(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
-  const start: Vec2 = {
-    x: Math.round(event.pageX / GRID_SIZE_UNIT),
-    y: Math.round(event.pageY / GRID_SIZE_UNIT),
-  };
+  const start = new Vec2(
+    Math.round(event.pageX / GRID_SIZE_UNIT),
+    Math.round(event.pageY / GRID_SIZE_UNIT),
+  );
 
   const outputPort = charon.disconnectByEdgeTo(port);
 
   if (outputPort) {
     // 既存のedgeを引っ張る
-    const outputPortPos_ = computePortPos(outputPort);
-    const inputPortPos_ = computePortPos(port);
-    const delta: Vec2 = {
-      x: inputPortPos_.x - outputPortPos_.x,
-      y: inputPortPos_.y - outputPortPos_.y,
-    };
-    const outputPos: Vec2 = {
-      x: start.x - delta.x,
-      y: start.y - delta.y,
-    };
-    this.value = { id: -1, port: outputPort, start: outputPos, delta };
+    const delta = computePortPos(port).minus(computePortPos(outputPort));
+    start.minus(delta);
+    this.value = { id: -1, port: outputPort, start, delta };
   } else {
     // 新規にedgeを引っ張る
     this.value = { id: -1, port, start, delta: null };
@@ -110,26 +108,18 @@ export function startGrabOutputPort(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
-  const start: Vec2 = {
-    x: Math.round(event.pageX / GRID_SIZE_UNIT),
-    y: Math.round(event.pageY / GRID_SIZE_UNIT),
-  };
+  const start = new Vec2(
+    Math.round(event.pageX / GRID_SIZE_UNIT),
+    Math.round(event.pageY / GRID_SIZE_UNIT),
+  );
 
   const inputPort = charon.disconnectByEdgeFrom(port);
 
   if (inputPort) {
     // 既存のedgeを引っ張る
-    const inputPortPos_ = computePortPos(inputPort);
-    const outputPortPos_ = computePortPos(port);
-    const delta: Vec2 = {
-      x: outputPortPos_.x - inputPortPos_.x,
-      y: outputPortPos_.y - inputPortPos_.y,
-    };
-    const inputPos: Vec2 = {
-      x: start.x - delta.x,
-      y: start.y - delta.y,
-    };
-    this.value = { id: -1, port: inputPort, start: inputPos, delta };
+    const delta = computePortPos(port).minus(computePortPos(inputPort));
+    start.minus(delta);
+    this.value = { id: -1, port: inputPort, start, delta };
   } else {
     // 新規にedgeを引っ張る
     this.value = { id: -1, port, start, delta: null };

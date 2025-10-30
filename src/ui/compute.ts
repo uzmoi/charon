@@ -1,4 +1,4 @@
-import type { Edge, NodePort, Vec2 } from "../core";
+import { Vec2, type Edge, type NodePort } from "../core";
 import { NODE_HEADER_HEIGHT, NODE_PORT_HEIGHT } from "./constants";
 import type { GrabbingSignal } from "./grabbing";
 
@@ -8,17 +8,17 @@ export const computePortPos = (port: NodePort<"in" | "out">): Vec2 => {
   switch (port.kind) {
     case "in": {
       const index = [...port.node.action.input.keys()].indexOf(port.name);
-      return {
-        x: nodePos.x,
-        y: nodePos.y + NODE_HEADER_HEIGHT + index * NODE_PORT_HEIGHT,
-      };
+      return new Vec2(
+        nodePos.x,
+        nodePos.y + NODE_HEADER_HEIGHT + index * NODE_PORT_HEIGHT,
+      );
     }
     case "out": {
       const index = [...port.node.action.output.keys()].indexOf(port.name);
-      return {
-        x: nodePos.x + port.node.size.width,
-        y: nodePos.y + NODE_HEADER_HEIGHT + index * NODE_PORT_HEIGHT,
-      };
+      return new Vec2(
+        nodePos.x + port.node.size.width,
+        nodePos.y + NODE_HEADER_HEIGHT + index * NODE_PORT_HEIGHT,
+      );
     }
   }
 };
@@ -33,16 +33,16 @@ export const computeEdgePathWithGrabbingDelta = (
   if (grabbing?.delta) {
     const { id, delta } = grabbing;
     if (id === from.node.id) {
-      p1 = {
-        x: p1.x + Math.round(delta.x),
-        y: p1.y + Math.round(delta.y),
-      };
+      p1.plus({
+        x: Math.round(delta.x),
+        y: Math.round(delta.y),
+      });
     }
     if (id === to.node.id) {
-      p2 = {
-        x: p2.x + Math.round(delta.x),
-        y: p2.y + Math.round(delta.y),
-      };
+      p2.plus({
+        x: Math.round(delta.x),
+        y: Math.round(delta.y),
+      });
     }
   }
 

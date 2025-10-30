@@ -1,10 +1,5 @@
 import type { NodePort } from "./port";
 
-export interface Vec2 {
-  x: number;
-  y: number;
-}
-
 export interface BoxSize {
   width: number;
   height: number;
