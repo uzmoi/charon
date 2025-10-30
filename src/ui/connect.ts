@@ -5,48 +5,37 @@ import {
   outputPorts,
   portType,
   type Charon,
+  type Node,
   type NodePort,
   type Vec2,
 } from "../core";
 import { computePortPos } from "./compute";
 import { MAXIMUM_CONNECT_DISTANCE } from "./constants";
 
-const computeInputPortToConnect = (
+const computePortToConnect = (
   charon: Charon,
-  outputPort: NodePort<"out">,
+  port: NodePort<"in" | "out">,
   cursorPos: Vec2,
-) => {
-  const allInputPorts = charon
-    .nodes()
-    .filter(node => node !== outputPort.node)
-    .flatMap(inputPorts)
-    .filter(port => portType(port) === portType(outputPort));
+): NodePort<"in" | "out"> | null => {
+  const type = portType(port);
 
-  const inputPortDistance = (port: NodePort<"in">) => {
+  const getPorts: (node: Node) => NodePort<"in" | "out">[] = {
+    in: outputPorts,
+    out: inputPorts,
+  }[port.kind];
+
+  const ports = charon
+    .nodes()
+    .filter(node => node !== port.node)
+    .flatMap(getPorts)
+    .filter(port => portType(port) === type);
+
+  const distanceToPort = (port: NodePort<"in" | "out">) => {
     const portPos = computePortPos(port);
     return distance(portPos, cursorPos);
   };
 
-  return nearest(allInputPorts, inputPortDistance, MAXIMUM_CONNECT_DISTANCE);
-};
-
-const computeOutputPortToConnect = (
-  charon: Charon,
-  inputPort: NodePort<"in">,
-  cursorPos: Vec2,
-) => {
-  const allOutputPorts = charon
-    .nodes()
-    .filter(node => node !== inputPort.node)
-    .flatMap(outputPorts)
-    .filter(port => portType(port) === portType(inputPort));
-
-  const outputPortDistance = (port: NodePort<"out">) => {
-    const portPos = computePortPos(port);
-    return distance(portPos, cursorPos);
-  };
-
-  return nearest(allOutputPorts, outputPortDistance, MAXIMUM_CONNECT_DISTANCE);
+  return nearest(ports, distanceToPort, MAXIMUM_CONNECT_DISTANCE);
 };
 
 export const computePosOfPortToConnect = (
@@ -54,16 +43,8 @@ export const computePosOfPortToConnect = (
   port: NodePort<"in" | "out">,
   cursorPos: Vec2,
 ): Vec2 | null => {
-  switch (port.kind) {
-    case "in": {
-      const outputPort = computeOutputPortToConnect(charon, port, cursorPos);
-      return outputPort && computePortPos(outputPort);
-    }
-    case "out": {
-      const inputPort = computeInputPortToConnect(charon, port, cursorPos);
-      return inputPort && computePortPos(inputPort);
-    }
-  }
+  const portToConnect = computePortToConnect(charon, port, cursorPos);
+  return portToConnect && computePortPos(portToConnect);
 };
 
 export const connectToNearestPort = (
@@ -71,30 +52,22 @@ export const connectToNearestPort = (
   port: NodePort<"in" | "out">,
   delta: Vec2,
 ) => {
-  switch (port.kind) {
-    case "in": {
-      const portPos = computePortPos(port);
-      const outputPort = computeOutputPortToConnect(charon, port, {
-        x: portPos.x + delta.x,
-        y: portPos.y + delta.y,
-      });
+  const portPos = computePortPos(port);
+  const portToConnect = computePortToConnect(charon, port, {
+    x: portPos.x + delta.x,
+    y: portPos.y + delta.y,
+  });
 
-      if (outputPort) {
-        charon.connectNodes(outputPort, port);
+  if (portToConnect) {
+    switch (port.kind) {
+      case "in": {
+        charon.connectNodes(portToConnect as NodePort<"out">, port);
+        break;
       }
-      break;
-    }
-    case "out": {
-      const portPos = computePortPos(port);
-      const inputPort = computeInputPortToConnect(charon, port, {
-        x: portPos.x + delta.x,
-        y: portPos.y + delta.y,
-      });
-
-      if (inputPort) {
-        charon.connectNodes(port, inputPort);
+      case "out": {
+        charon.connectNodes(port, portToConnect as NodePort<"in">);
+        break;
       }
-      break;
     }
   }
 };
