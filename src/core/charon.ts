@@ -57,4 +57,24 @@ export class Charon {
   connectNodes(from: NodePort<"out">, to: NodePort<"in">): void {
     this.#$edges.value = [...this.#$edges.value, { from, to }];
   }
+
+  disconnect(port: NodePort<"in" | "out">): NodePort<"in" | "out"> | undefined {
+    const edges = this.#$edges.value;
+    const index = edges.findIndex(
+      {
+        out: ({ from: edgePort }: Edge) =>
+          edgePort.node === port.node && edgePort.name === port.name,
+        in: ({ to: edgePort }: Edge) =>
+          edgePort.node === port.node && edgePort.name === port.name,
+      }[port.kind],
+    );
+
+    if (index === -1) return;
+
+    this.#$edges.value = edges.toSpliced(index, 1);
+
+    const { from, to } = edges[index]!;
+
+    return { in: from, out: to }[port.kind];
+  }
 }

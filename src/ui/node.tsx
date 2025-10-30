@@ -9,12 +9,7 @@ import {
   type Node,
 } from "../core";
 import { GRID_SIZE_UNIT } from "./constants";
-import {
-  startGrabOutputPort,
-  startGrabInputPort,
-  startMove,
-  type GrabbingSignal,
-} from "./grabbing";
+import { startGrabPort, startMove, type GrabbingSignal } from "./grabbing";
 import styles from "./node.module.scss";
 import { css } from "./utils";
 
@@ -85,7 +80,7 @@ export const CharonNode: preact.FunctionComponent<{
             <div key={port.name} class={styles.port}>
               <div
                 class={styles.port_circle}
-                onPointerDown={startGrabInputPort.bind(grabbing, charon, port)}
+                onPointerDown={startGrabPort.bind(grabbing, charon, port)}
               />
               <p class={styles.port_type}>{portType(port)}</p>
               <p class={styles.port_name}>{port.name}</p>
@@ -97,7 +92,7 @@ export const CharonNode: preact.FunctionComponent<{
             <div key={port.name} class={styles.port}>
               <div
                 class={styles.port_circle}
-                onPointerDown={startGrabOutputPort.bind(grabbing, charon, port)}
+                onPointerDown={startGrabPort.bind(grabbing, charon, port)}
               />
               <p class={styles.port_type}>{portType(port)}</p>
               <p class={styles.port_name}>{port.name}</p>
