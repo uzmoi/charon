@@ -1,8 +1,8 @@
 import { useComputed } from "@preact/signals";
 import { edgeKey, type Charon } from "../core";
+import { computePortPos } from "./compute";
 import { CharonEdge } from "./edge";
 import type { GrabbingSignal } from "./grabbing";
-import { inputPortPos, outputPortPos } from "./pos";
 
 export const EdgeCanvas: preact.FunctionComponent<{
   charon: Charon;
@@ -13,10 +13,7 @@ export const EdgeCanvas: preact.FunctionComponent<{
       if (grabbing.value == null) return null;
       const { port, delta } = grabbing.value;
       if (port == null || delta == null) return null;
-      const portPos = {
-        in: () => inputPortPos(port.node, port.name),
-        out: () => outputPortPos(port.node, port.name),
-      }[port.kind]();
+      const portPos = computePortPos(port);
       return {
         x: portPos.x + delta.x,
         y: portPos.y + delta.y,
@@ -24,10 +21,7 @@ export const EdgeCanvas: preact.FunctionComponent<{
     })();
     const edgePoss = charon
       .edges()
-      .flatMap(edge => [
-        outputPortPos(edge.from.node, edge.from.name),
-        inputPortPos(edge.to.node, edge.to.name),
-      ]);
+      .flatMap(edge => [computePortPos(edge.from), computePortPos(edge.to)]);
 
     const maxX = Math.max(cursorPos?.x ?? 0, ...edgePoss.map(pos => pos.x));
     const maxY = Math.max(cursorPos?.y ?? 0, ...edgePoss.map(pos => pos.y));

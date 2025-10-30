@@ -8,8 +8,8 @@ import {
   type NodePort,
   type Vec2,
 } from "../core";
+import { computePortPos } from "./compute";
 import { MAXIMUM_CONNECT_DISTANCE } from "./constants";
-import { inputPortPos, outputPortPos } from "./pos";
 
 const computeInputPortToConnect = (
   charon: Charon,
@@ -23,7 +23,7 @@ const computeInputPortToConnect = (
     .filter(port => portType(port) === portType(outputPort));
 
   const inputPortDistance = (port: NodePort<"in">) => {
-    const portPos = inputPortPos(port.node, port.name);
+    const portPos = computePortPos(port);
     return distance(portPos, cursorPos);
   };
 
@@ -42,7 +42,7 @@ const computeOutputPortToConnect = (
     .filter(port => portType(port) === portType(inputPort));
 
   const outputPortDistance = (port: NodePort<"out">) => {
-    const portPos = outputPortPos(port.node, port.name);
+    const portPos = computePortPos(port);
     return distance(portPos, cursorPos);
   };
 
@@ -57,11 +57,11 @@ export const computePosOfPortToConnect = (
   switch (port.kind) {
     case "in": {
       const outputPort = computeOutputPortToConnect(charon, port, cursorPos);
-      return outputPort && outputPortPos(outputPort.node, outputPort.name);
+      return outputPort && computePortPos(outputPort);
     }
     case "out": {
       const inputPort = computeInputPortToConnect(charon, port, cursorPos);
-      return inputPort && inputPortPos(inputPort.node, inputPort.name);
+      return inputPort && computePortPos(inputPort);
     }
   }
 };
@@ -73,7 +73,7 @@ export const connectToNearestPort = (
 ) => {
   switch (port.kind) {
     case "in": {
-      const portPos = inputPortPos(port.node, port.name);
+      const portPos = computePortPos(port);
       const outputPort = computeOutputPortToConnect(charon, port, {
         x: portPos.x + delta.x,
         y: portPos.y + delta.y,
@@ -85,7 +85,7 @@ export const connectToNearestPort = (
       break;
     }
     case "out": {
-      const portPos = outputPortPos(port.node, port.name);
+      const portPos = computePortPos(port);
       const inputPort = computeInputPortToConnect(charon, port, {
         x: portPos.x + delta.x,
         y: portPos.y + delta.y,

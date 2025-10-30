@@ -1,9 +1,9 @@
 import { useSignal, type Signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import type { Charon, NodeId, NodePort, Vec2 } from "../core";
+import { computePortPos } from "./compute";
 import { connectToNearestPort } from "./connect";
 import { GRID_SIZE_UNIT } from "./constants";
-import { inputPortPos, outputPortPos } from "./pos";
 
 export type GrabbingSignal = Signal<
   | ({ start: Vec2; delta: Vec2 | null } & (
@@ -86,8 +86,8 @@ export function startGrabInputPort(
 
   if (outputPort) {
     // 既存のedgeを引っ張る
-    const outputPortPos_ = outputPortPos(outputPort.node, outputPort.name);
-    const inputPortPos_ = inputPortPos(port.node, port.name);
+    const outputPortPos_ = computePortPos(outputPort);
+    const inputPortPos_ = computePortPos(port);
     const delta: Vec2 = {
       x: inputPortPos_.x - outputPortPos_.x,
       y: inputPortPos_.y - outputPortPos_.y,
@@ -119,8 +119,8 @@ export function startGrabOutputPort(
 
   if (inputPort) {
     // 既存のedgeを引っ張る
-    const inputPortPos_ = inputPortPos(inputPort.node, inputPort.name);
-    const outputPortPos_ = outputPortPos(port.node, port.name);
+    const inputPortPos_ = computePortPos(inputPort);
+    const outputPortPos_ = computePortPos(port);
     const delta: Vec2 = {
       x: outputPortPos_.x - inputPortPos_.x,
       y: outputPortPos_.y - inputPortPos_.y,

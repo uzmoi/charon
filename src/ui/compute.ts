@@ -1,13 +1,34 @@
-import type { Edge, Vec2 } from "../core";
+import type { Edge, NodePort, Vec2 } from "../core";
+import { NODE_HEADER_HEIGHT, NODE_PORT_HEIGHT } from "./constants";
 import type { GrabbingSignal } from "./grabbing";
-import { inputPortPos, outputPortPos } from "./pos";
+
+export const computePortPos = (port: NodePort<"in" | "out">): Vec2 => {
+  const nodePos = port.node.pos.value;
+
+  switch (port.kind) {
+    case "in": {
+      const index = [...port.node.action.input.keys()].indexOf(port.name);
+      return {
+        x: nodePos.x,
+        y: nodePos.y + NODE_HEADER_HEIGHT + index * NODE_PORT_HEIGHT,
+      };
+    }
+    case "out": {
+      const index = [...port.node.action.output.keys()].indexOf(port.name);
+      return {
+        x: nodePos.x + port.node.size.width,
+        y: nodePos.y + NODE_HEADER_HEIGHT + index * NODE_PORT_HEIGHT,
+      };
+    }
+  }
+};
 
 export const computeEdgePathWithGrabbingDelta = (
   { from, to }: Edge,
   { value: grabbing }: GrabbingSignal,
 ) => {
-  let p1 = outputPortPos(from.node, from.name);
-  let p2 = inputPortPos(to.node, to.name);
+  let p1 = computePortPos(from);
+  let p2 = computePortPos(to);
 
   if (grabbing?.delta) {
     const { id, delta } = grabbing;
