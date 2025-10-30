@@ -10,8 +10,8 @@ export const GrabbingEdge: preact.FunctionComponent<{
 }> = ({ charon, grabbing }) => {
   if (grabbing.value?.port == null) return null;
 
-  const { port, portKind, start, current } = grabbing.value;
-  if (current == null) return null;
+  const { port, portKind, delta } = grabbing.value;
+  if (delta == null) return null;
 
   const p1 = {
     in: () => inputPortPos(port.node, port.name),
@@ -19,8 +19,8 @@ export const GrabbingEdge: preact.FunctionComponent<{
   }[portKind]();
 
   const p2 = {
-    x: p1.x + current.x - start.x,
-    y: p1.y + current.y - start.y,
+    x: p1.x + delta.x,
+    y: p1.y + delta.y,
   };
 
   const p3 = computePosOfPortToConnect(charon, port, portKind, p2);

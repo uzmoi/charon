@@ -70,11 +70,15 @@ export const connectToNearestPort = (
   charon: Charon,
   portKind: "in" | "out",
   port: NodePort,
-  current: Vec2,
+  delta: Vec2,
 ) => {
   switch (portKind) {
     case "in": {
-      const outputPort = computeOutputPortToConnect(charon, port, current);
+      const portPos = inputPortPos(port.node, port.name);
+      const outputPort = computeOutputPortToConnect(charon, port, {
+        x: portPos.x + delta.x,
+        y: portPos.y + delta.y,
+      });
 
       if (outputPort) {
         charon.connectNodes(outputPort, port);
@@ -82,7 +86,11 @@ export const connectToNearestPort = (
       break;
     }
     case "out": {
-      const inputPort = computeInputPortToConnect(charon, port, current);
+      const portPos = outputPortPos(port.node, port.name);
+      const inputPort = computeInputPortToConnect(charon, port, {
+        x: portPos.x + delta.x,
+        y: portPos.y + delta.y,
+      });
 
       if (inputPort) {
         charon.connectNodes(port, inputPort);

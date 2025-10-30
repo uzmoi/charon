@@ -9,18 +9,18 @@ export const computeEdgePathWithGrabbingDelta = (
   let p1 = outputPortPos(edge.from, edge.fromPort);
   let p2 = inputPortPos(edge.to, edge.toPort);
 
-  if (grabbing?.current) {
-    const { id, start, current } = grabbing;
+  if (grabbing?.delta) {
+    const { id, delta } = grabbing;
     if (id === edge.from.id) {
       p1 = {
-        x: p1.x + Math.round(current.x - start.x),
-        y: p1.y + Math.round(current.y - start.y),
+        x: p1.x + Math.round(delta.x),
+        y: p1.y + Math.round(delta.y),
       };
     }
     if (id === edge.to.id) {
       p2 = {
-        x: p2.x + Math.round(current.x - start.x),
-        y: p2.y + Math.round(current.y - start.y),
+        x: p2.x + Math.round(delta.x),
+        y: p2.y + Math.round(delta.y),
       };
     }
   }

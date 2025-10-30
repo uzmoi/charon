@@ -9,7 +9,19 @@ export const EdgeCanvas: preact.FunctionComponent<{
   grabbing: GrabbingSignal;
 }> = ({ charon, grabbing }) => {
   const edgeMax = useComputed(() => {
-    const cursorPos = grabbing.value?.current;
+    const cursorPos = (() => {
+      if (grabbing.value == null) return null;
+      const { port, portKind, delta } = grabbing.value;
+      if (port == null || delta == null) return null;
+      const portPos = {
+        in: () => inputPortPos(port.node, port.name),
+        out: () => outputPortPos(port.node, port.name),
+      }[portKind]();
+      return {
+        x: portPos.x + delta.x,
+        y: portPos.y + delta.y,
+      };
+    })();
     const edgePoss = charon
       .edges()
       .flatMap(edge => [
