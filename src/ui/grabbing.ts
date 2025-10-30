@@ -13,8 +13,8 @@ import { GRID_SIZE_UNIT } from "./constants";
 
 export type GrabbingSignal = Signal<
   | ({ start: ReadonlyVec2; delta: ReadonlyVec2 | null } & (
-      | { id: NodeId; port?: undefined; portKind?: undefined }
-      | { id: -1; port: NodePort<"in" | "out"> }
+      | { type: "node"; id: NodeId }
+      | { type: "port"; port: NodePort<"in" | "out"> }
     ))
   | undefined
 >;
@@ -36,18 +36,17 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
     };
 
     const onPointerUp = (_event: PointerEvent): void => {
-      if (grabbing.value?.delta == null) return;
-
-      const { id, delta, port } = grabbing.value;
+      const state = grabbing.value;
+      if (state?.delta == null) return;
       grabbing.value = undefined;
 
-      if (port) {
+      if (state.type === "port") {
         // 最近傍ポートに接続
-        connectToNearestPort(charon, port, delta);
+        connectToNearestPort(charon, state.port, state.delta);
       } else {
-        charon.node(id)?.move({
-          x: Math.round(delta.x),
-          y: Math.round(delta.y),
+        charon.node(state.id)?.move({
+          x: Math.round(state.delta.x),
+          y: Math.round(state.delta.y),
         });
       }
     };
@@ -73,7 +72,7 @@ export function startMove(
     event.pageX / GRID_SIZE_UNIT,
     event.pageY / GRID_SIZE_UNIT,
   );
-  this.value = { id, start, delta: null };
+  this.value = { start, delta: null, type: "node", id };
 }
 
 export function startGrabPort(
@@ -94,9 +93,9 @@ export function startGrabPort(
     // 既存のedgeを引っ張る
     const delta = computePortPos(port).minus(computePortPos(disconnectedPort));
     start.minus(delta);
-    this.value = { id: -1, port: disconnectedPort, start, delta };
+    this.value = { start, delta, type: "port", port: disconnectedPort };
   } else {
     // 新規にedgeを引っ張る
-    this.value = { id: -1, port, start, delta: null };
+    this.value = { start, delta: null, type: "port", port };
   }
 }

@@ -8,6 +8,7 @@ import {
   type Charon,
   type Node,
 } from "../core";
+import { computeGrabbingDelta } from "./compute";
 import { GRID_SIZE_UNIT } from "./constants";
 import { startGrabPort, startMove, type GrabbingSignal } from "./grabbing";
 import styles from "./node.module.scss";
@@ -26,15 +27,7 @@ export const CharonNode: preact.FunctionComponent<{
 
   const style = useComputed(() => {
     const pos = node.pos.value;
-    let delta = { x: 0, y: 0 };
-
-    if (grabbing.value?.delta != null && grabbing.value.id === node.id) {
-      const delta_ = grabbing.value.delta;
-      delta = {
-        x: Math.round(delta_.x),
-        y: Math.round(delta_.y),
-      };
-    }
+    const delta = computeGrabbingDelta(grabbing, node.id);
 
     // TODO: +viewBoxPos
     return css({

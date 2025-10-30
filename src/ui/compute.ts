@@ -1,4 +1,10 @@
-import { Vec2, type Edge, type NodePort } from "../core";
+import {
+  Vec2,
+  type Edge,
+  type NodeId,
+  type NodePort,
+  type ReadonlyVec2,
+} from "../core";
 import { NODE_HEADER_HEIGHT, NODE_PORT_HEIGHT } from "./constants";
 import type { GrabbingSignal } from "./grabbing";
 
@@ -23,6 +29,34 @@ export const computePortPos = (port: NodePort<"in" | "out">): Vec2 => {
   }
 };
 
+export const computeGrabbingPos = ({
+  value: grabbing,
+}: GrabbingSignal): Vec2 | null => {
+  if (grabbing?.type !== "port") return null;
+  const { port, delta } = grabbing;
+  if (port == null || delta == null) return null;
+  return computePortPos(port).plus(delta);
+};
+
+export const computeGrabbingDelta = (
+  { value: grabbing }: GrabbingSignal,
+  nodeId: NodeId,
+): ReadonlyVec2 => {
+  if (
+    grabbing?.delta != null &&
+    grabbing.type === "node" &&
+    grabbing.id === nodeId
+  ) {
+    const { x, y } = grabbing.delta;
+    return {
+      x: Math.round(x),
+      y: Math.round(y),
+    };
+  }
+
+  return { x: 0, y: 0 };
+};
+
 export const computeEdgePathWithGrabbingDelta = (
   { from, to }: Edge,
   { value: grabbing }: GrabbingSignal,
@@ -30,7 +64,7 @@ export const computeEdgePathWithGrabbingDelta = (
   let p1 = computePortPos(from);
   let p2 = computePortPos(to);
 
-  if (grabbing?.delta) {
+  if (grabbing?.delta && grabbing.type === "node") {
     const { id, delta } = grabbing;
     if (id === from.node.id) {
       p1.plus({

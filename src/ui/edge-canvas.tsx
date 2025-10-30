@@ -1,6 +1,6 @@
 import { useComputed } from "@preact/signals";
-import { edgeKey, type Charon } from "../core";
-import { computePortPos } from "./compute";
+import type { Charon } from "../core";
+import { computeGrabbingPos, computePortPos } from "./compute";
 import { CharonEdge } from "./edge";
 import type { GrabbingSignal } from "./grabbing";
 
@@ -9,12 +9,7 @@ export const EdgeCanvas: preact.FunctionComponent<{
   grabbing: GrabbingSignal;
 }> = ({ charon, grabbing }) => {
   const edgeMax = useComputed(() => {
-    const cursorPos = (() => {
-      if (grabbing.value == null) return null;
-      const { port, delta } = grabbing.value;
-      if (port == null || delta == null) return null;
-      return computePortPos(port).plus(delta);
-    })();
+    const cursorPos = computeGrabbingPos(grabbing);
     const edgePoss = charon
       .edges()
       .flatMap(edge => [computePortPos(edge.from), computePortPos(edge.to)]);
@@ -37,7 +32,7 @@ export const EdgeCanvas: preact.FunctionComponent<{
   return (
     <svg width={width} height={height} viewBox={viewBox}>
       {charon.edges().map(edge => (
-        <CharonEdge key={edgeKey(edge)} {...{ edge, grabbing }} />
+        <CharonEdge key={edge.key} {...{ edge, grabbing }} />
       ))}
     </svg>
   );

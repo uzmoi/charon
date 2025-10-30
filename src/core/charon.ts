@@ -55,7 +55,9 @@ export class Charon {
   }
 
   connectNodes(from: NodePort<"out">, to: NodePort<"in">): void {
-    this.#$edges.value = [...this.#$edges.value, { from, to }];
+    const idToString = (node: Node) => node.id.toString(16).padStart(8, "0");
+    const key = `${idToString(from.node)}#${from.name}-${idToString(to.node)}#${to.name}`;
+    this.#$edges.value = [...this.#$edges.value, { key, from, to }];
   }
 
   disconnect(port: NodePort<"in" | "out">): NodePort<"in" | "out"> | undefined {

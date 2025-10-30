@@ -13,6 +13,7 @@ export interface Action {
 }
 
 export interface Edge {
+  key: string;
   from: NodePort<"out">;
   to: NodePort<"in">;
 }

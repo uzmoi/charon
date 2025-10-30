@@ -7,13 +7,13 @@ export const GrabbingEdge: preact.FunctionComponent<{
   charon: Charon;
   grabbing: GrabbingSignal;
 }> = ({ charon, grabbing }) => {
-  if (grabbing.value?.port == null) return null;
+  if (grabbing.value?.type !== "port") return null;
 
   const { port, delta } = grabbing.value;
   if (delta == null) return null;
 
   const p1 = computePortPos(port);
-  const p2 = p1.copy().plus(delta);
+  const p2 = p1.clone().plus(delta);
   const p3 = computePosOfPortToConnect(charon, port, p2);
 
   const maxX = Math.ceil(Math.max(p1.x, p2.x, p3?.x ?? 0) + 0.5);

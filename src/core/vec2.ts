@@ -9,7 +9,7 @@ export class Vec2 implements ReadonlyVec2 {
     public y: number,
   ) {}
 
-  copy(): Vec2 {
+  clone(): Vec2 {
     return new Vec2(this.x, this.y);
   }
 
