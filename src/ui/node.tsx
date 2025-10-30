@@ -1,7 +1,13 @@
 import { useComputed } from "@preact/signals";
 import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
 import { memo } from "preact/compat";
-import { inputPorts, outputPorts, type Charon, type Node } from "../core";
+import {
+  inputPorts,
+  outputPorts,
+  portType,
+  type Charon,
+  type Node,
+} from "../core";
 import { GRID_SIZE_UNIT } from "./constants";
 import {
   startGrabOutputPort,
@@ -81,7 +87,7 @@ export const CharonNode: preact.FunctionComponent<{
                 class={styles.port_circle}
                 onPointerDown={startGrabInputPort.bind(grabbing, charon, port)}
               />
-              <p class={styles.port_type}>{port.type}</p>
+              <p class={styles.port_type}>{portType(port)}</p>
               <p class={styles.port_name}>{port.name}</p>
             </div>
           ))}
@@ -93,7 +99,7 @@ export const CharonNode: preact.FunctionComponent<{
                 class={styles.port_circle}
                 onPointerDown={startGrabOutputPort.bind(grabbing, charon, port)}
               />
-              <p class={styles.port_type}>{port.type}</p>
+              <p class={styles.port_type}>{portType(port)}</p>
               <p class={styles.port_name}>{port.name}</p>
             </div>
           ))}

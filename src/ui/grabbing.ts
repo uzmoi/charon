@@ -8,7 +8,7 @@ import { inputPortPos, outputPortPos } from "./pos";
 export type GrabbingSignal = Signal<
   | ({ start: Vec2; delta: Vec2 | null } & (
       | { id: NodeId; port?: undefined; portKind?: undefined }
-      | { id: -1; port: NodePort; portKind: "in" | "out" }
+      | { id: -1; port: NodePort<"in" | "out"> }
     ))
   | undefined
 >;
@@ -32,12 +32,12 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
     const onPointerUp = (_event: PointerEvent): void => {
       if (grabbing.value?.delta == null) return;
 
-      const { id, delta, port, portKind } = grabbing.value;
+      const { id, delta, port } = grabbing.value;
       grabbing.value = undefined;
 
       if (port) {
         // 最近傍ポートに接続
-        connectToNearestPort(charon, portKind, port, delta);
+        connectToNearestPort(charon, port, delta);
       } else {
         charon.node(id)?.move({
           x: Math.round(delta.x),
@@ -73,7 +73,7 @@ export function startMove(
 export function startGrabInputPort(
   this: GrabbingSignal,
   charon: Charon,
-  port: NodePort,
+  port: NodePort<"in">,
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
@@ -96,23 +96,17 @@ export function startGrabInputPort(
       x: start.x - delta.x,
       y: start.y - delta.y,
     };
-    this.value = {
-      id: -1,
-      port: outputPort,
-      portKind: "out",
-      start: outputPos,
-      delta,
-    };
+    this.value = { id: -1, port: outputPort, start: outputPos, delta };
   } else {
     // 新規にedgeを引っ張る
-    this.value = { id: -1, port, portKind: "in", start, delta: null };
+    this.value = { id: -1, port, start, delta: null };
   }
 }
 
 export function startGrabOutputPort(
   this: GrabbingSignal,
   charon: Charon,
-  port: NodePort,
+  port: NodePort<"out">,
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
@@ -135,15 +129,9 @@ export function startGrabOutputPort(
       x: start.x - delta.x,
       y: start.y - delta.y,
     };
-    this.value = {
-      id: -1,
-      port: inputPort,
-      portKind: "in",
-      start: inputPos,
-      delta,
-    };
+    this.value = { id: -1, port: inputPort, start: inputPos, delta };
   } else {
     // 新規にedgeを引っ張る
-    this.value = { id: -1, port, portKind: "out", start, delta: null };
+    this.value = { id: -1, port, start, delta: null };
   }
 }

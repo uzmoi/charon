@@ -49,18 +49,12 @@ export class Charon {
 
     this.#nodes.delete(id);
     this.#$edges.value = this.#$edges.value.filter(
-      edge => edge.from.id === id || edge.to.id === id,
+      ({ from, to }) => from.node.id === id || to.node.id === id,
     );
     this.#update();
   }
 
-  connectNodes(from: NodePort, to: NodePort): void {
-    const newEdge: Edge = {
-      from: from.node,
-      fromPort: from.name,
-      to: to.node,
-      toPort: to.name,
-    };
-    this.#$edges.value = [...this.#$edges.value, newEdge];
+  connectNodes(from: NodePort<"out">, to: NodePort<"in">): void {
+    this.#$edges.value = [...this.#$edges.value, { from, to }];
   }
 }

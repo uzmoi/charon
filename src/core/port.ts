@@ -1,25 +1,33 @@
 import type { Node } from "./node";
 import type { Vec2 } from "./types";
 
-export interface NodePort {
-  node: Node;
-  name: string;
-  type: string;
-}
+export type NodePort<T extends "in" | "out"> =
+  T extends T ?
+    {
+      node: Node;
+      kind: T;
+      name: string;
+    }
+  : never;
 
-const nodePorts = (
+const nodePorts = <T extends "in" | "out">(
   node: Node,
   ports: ReadonlyMap<string, { name: string }>,
-): NodePort[] =>
+  kind: T,
+): NodePort<T>[] =>
   ports
-    .entries()
-    .map(([name, { name: type }]) => ({ node, name, type }))
+    .keys()
+    .map(name => ({ node, kind, name }) as NodePort<T>)
     .toArray();
 
-export const inputPorts = (node: Node): NodePort[] => {
-  return nodePorts(node, node.action.input);
+export const inputPorts = (node: Node): NodePort<"in">[] => {
+  return nodePorts(node, node.action.input, "in");
 };
 
-export const outputPorts = (node: Node): NodePort[] => {
-  return nodePorts(node, node.action.output);
+export const outputPorts = (node: Node): NodePort<"out">[] => {
+  return nodePorts(node, node.action.output, "out");
+};
+
+export const portType = (port: NodePort<"in" | "out">): string => {
+  return port.node.action[`${port.kind}put`].get(port.name)!.name;
 };

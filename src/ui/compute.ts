@@ -3,21 +3,21 @@ import type { GrabbingSignal } from "./grabbing";
 import { inputPortPos, outputPortPos } from "./pos";
 
 export const computeEdgePathWithGrabbingDelta = (
-  edge: Edge,
+  { from, to }: Edge,
   { value: grabbing }: GrabbingSignal,
 ) => {
-  let p1 = outputPortPos(edge.from, edge.fromPort);
-  let p2 = inputPortPos(edge.to, edge.toPort);
+  let p1 = outputPortPos(from.node, from.name);
+  let p2 = inputPortPos(to.node, to.name);
 
   if (grabbing?.delta) {
     const { id, delta } = grabbing;
-    if (id === edge.from.id) {
+    if (id === from.node.id) {
       p1 = {
         x: p1.x + Math.round(delta.x),
         y: p1.y + Math.round(delta.y),
       };
     }
-    if (id === edge.to.id) {
+    if (id === to.node.id) {
       p2 = {
         x: p2.x + Math.round(delta.x),
         y: p2.y + Math.round(delta.y),

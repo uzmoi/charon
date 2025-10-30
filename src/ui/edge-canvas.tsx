@@ -11,12 +11,12 @@ export const EdgeCanvas: preact.FunctionComponent<{
   const edgeMax = useComputed(() => {
     const cursorPos = (() => {
       if (grabbing.value == null) return null;
-      const { port, portKind, delta } = grabbing.value;
+      const { port, delta } = grabbing.value;
       if (port == null || delta == null) return null;
       const portPos = {
         in: () => inputPortPos(port.node, port.name),
         out: () => outputPortPos(port.node, port.name),
-      }[portKind]();
+      }[port.kind]();
       return {
         x: portPos.x + delta.x,
         y: portPos.y + delta.y,
@@ -25,8 +25,8 @@ export const EdgeCanvas: preact.FunctionComponent<{
     const edgePoss = charon
       .edges()
       .flatMap(edge => [
-        outputPortPos(edge.from, edge.fromPort),
-        inputPortPos(edge.to, edge.toPort),
+        outputPortPos(edge.from.node, edge.from.name),
+        inputPortPos(edge.to.node, edge.to.name),
       ]);
 
     const maxX = Math.max(cursorPos?.x ?? 0, ...edgePoss.map(pos => pos.x));
