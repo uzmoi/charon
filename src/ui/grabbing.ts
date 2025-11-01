@@ -83,8 +83,8 @@ export function startGrabPort(
 ): void {
   event.preventDefault();
   const start = new Vec2(
-    Math.round(event.pageX / GRID_SIZE_UNIT),
-    Math.round(event.pageY / GRID_SIZE_UNIT),
+    event.pageX / GRID_SIZE_UNIT,
+    event.pageY / GRID_SIZE_UNIT,
   );
 
   const disconnectedPort = charon.disconnect(port);
