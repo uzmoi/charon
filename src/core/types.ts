@@ -1,4 +1,4 @@
-import type { NodePort } from "./port";
+import type { InputPort, OutputPort } from "./port";
 
 export interface BoxSize {
   width: number;
@@ -14,6 +14,6 @@ export interface Action {
 
 export interface Edge {
   key: string;
-  from: NodePort<"out">;
-  to: NodePort<"in">;
+  from: OutputPort;
+  to: InputPort;
 }

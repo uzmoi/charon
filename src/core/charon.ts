@@ -1,6 +1,6 @@
 import { signal } from "@preact/signals";
 import { Node, type NodeId } from "./node";
-import type { NodePort } from "./port";
+import type { InputPort, OutputPort, Port } from "./port";
 import type { Action, Edge } from "./types";
 
 export class Charon {
@@ -54,13 +54,13 @@ export class Charon {
     this.#update();
   }
 
-  connectNodes(from: NodePort<"out">, to: NodePort<"in">): void {
+  connectNodes(from: OutputPort, to: InputPort): void {
     const idToString = (node: Node) => node.id.toString(16).padStart(8, "0");
     const key = `${idToString(from.node)}#${from.name}-${idToString(to.node)}#${to.name}`;
     this.#$edges.value = [...this.#$edges.value, { key, from, to }];
   }
 
-  disconnect(port: NodePort<"in" | "out">): NodePort<"in" | "out"> | undefined {
+  disconnect(port: Port): Port | undefined {
     const edges = this.#$edges.value;
     const index = edges.findIndex(
       {

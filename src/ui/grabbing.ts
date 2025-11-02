@@ -4,7 +4,7 @@ import {
   Vec2,
   type Charon,
   type NodeId,
-  type NodePort,
+  type Port,
   type ReadonlyVec2,
 } from "../core";
 import { computePortPos } from "./compute";
@@ -14,7 +14,7 @@ import { GRID_SIZE_UNIT } from "./constants";
 export type GrabbingSignal = Signal<
   | ({ start: ReadonlyVec2; delta: ReadonlyVec2 | null } & (
       | { type: "node"; id: NodeId }
-      | { type: "port"; port: NodePort<"in" | "out"> }
+      | { type: "port"; port: Port }
     ))
   | undefined
 >;
@@ -78,7 +78,7 @@ export function startMove(
 export function startGrabPort(
   this: GrabbingSignal,
   charon: Charon,
-  port: NodePort<"in" | "out">,
+  port: Port,
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();

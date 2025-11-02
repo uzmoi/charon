@@ -2,13 +2,13 @@ import {
   Vec2,
   type Edge,
   type NodeId,
-  type NodePort,
+  type Port,
   type ReadonlyVec2,
 } from "../core";
 import { NODE_HEADER_HEIGHT, NODE_PORT_HEIGHT } from "./constants";
 import type { GrabbingSignal } from "./grabbing";
 
-export const computePortPos = (port: NodePort<"in" | "out">): Vec2 => {
+export const computePortPos = (port: Port): Vec2 => {
   const nodePos = port.node.pos.value;
 
   switch (port.kind) {
