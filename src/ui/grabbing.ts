@@ -87,15 +87,16 @@ export function startGrabPort(
     event.pageY / GRID_SIZE_UNIT,
   );
 
+  let delta = null;
+
   const disconnectedPort = charon.disconnect(port);
 
   if (disconnectedPort) {
     // 既存のedgeを引っ張る
-    const delta = computePortPos(port).minus(computePortPos(disconnectedPort));
+    delta = computePortPos(port).minus(computePortPos(disconnectedPort));
     start.minus(delta);
-    this.value = { start, delta, type: "port", port: disconnectedPort };
-  } else {
-    // 新規にedgeを引っ張る
-    this.value = { start, delta: null, type: "port", port };
+    port = disconnectedPort;
   }
+
+  this.value = { start, delta, type: "port", port };
 }
