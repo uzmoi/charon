@@ -1,0 +1,12 @@
+@use "constants";
+
+.edge_path {
+  fill: none;
+  stroke: #383;
+  stroke-width: constants.$edge-width;
+}
+
+.edge_line {
+  stroke: #383;
+  stroke-width: constants.$edge-line-width;
+}

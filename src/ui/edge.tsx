@@ -1,6 +1,7 @@
 import { useComputed } from "@preact/signals";
 import type { Edge } from "../core";
 import { computeEdgePathWithGrabbingDelta } from "./compute";
+import styles from "./edge.module.scss";
 import type { GrabbingSignal } from "./grabbing";
 
 export const CharonEdge: preact.FunctionComponent<{
@@ -11,13 +12,5 @@ export const CharonEdge: preact.FunctionComponent<{
     return computeEdgePathWithGrabbingDelta(edge, grabbing);
   });
 
-  return (
-    <path
-      id={edge.key}
-      d={path}
-      fill="none"
-      stroke="#1e9124"
-      stroke-width="0.25"
-    />
-  );
+  return <path id={edge.key} class={styles.edge_path} d={path} />;
 };

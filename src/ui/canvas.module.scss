@@ -3,17 +3,29 @@
 .canvas {
   width: 100%;
   height: 100%;
+  overflow: hidden;
 
-  background-image:
-    linear-gradient(0turn, transparent calc(100% - 1px), #888 calc(100% - 1px)),
-    linear-gradient(
-      0.25turn,
-      transparent calc(100% - 1px),
-      #888 calc(100% - 1px)
+  @function grid($angle, $color: #444) {
+    @return linear-gradient(
+      $angle,
+      $color 25%,
+      transparent 25% 75%,
+      $color 75%
     );
-  background-size: constants.$grid-size constants.$grid-size;
+  }
+
+  // 市松模様背景にする。
+  // ２枚で模様自体はできるが、拡大率を変えたときに斜めの線が見えることがある。
+  // Firefox 144 で確認したところ 100% でも割と目立つ線が出る。
+  // 角度を変えて重ねることで防ぐ。
+  background-image: grid(45deg), grid(135deg), grid(45deg), grid(135deg);
+  background-size: constants.$grid-size * 2 constants.$grid-size * 2;
   background-repeat: repeat;
-  background-position: 0 0;
+  background-position:
+    0 0,
+    constants.$grid-size 0,
+    constants.$grid-size constants.$grid-size,
+    0 constants.$grid-size;
 
   position: relative;
 }

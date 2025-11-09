@@ -1,6 +1,8 @@
 import type { Charon } from "../core";
 import { computePortPos, edgePath } from "./compute";
 import { computePosOfPortToConnect } from "./connect";
+import { PORT_SIZE } from "./constants";
+import styles from "./edge.module.scss";
 import type { GrabbingSignal } from "./grabbing";
 
 export const GrabbingEdge: preact.FunctionComponent<{
@@ -26,23 +28,17 @@ export const GrabbingEdge: preact.FunctionComponent<{
       viewBox={`0 0 ${maxX} ${maxY}`}
       style="position: absolute;"
     >
-      <path
-        d={edgePath(p1, p2)}
-        fill="none"
-        stroke="#1e9124"
-        stroke-width="0.25"
-      />
-      <circle cx={p2.x} cy={p2.y} r="0.25" />
+      <path class={styles.edge_path} d={edgePath(p1, p2)} />
       {p3 && (
         <line
+          class={styles.edge_line}
           x1={p2.x}
           y1={p2.y}
           x2={p3.x}
           y2={p3.y}
-          stroke="yellow"
-          stroke-width="0.125"
         />
       )}
+      <circle cx={p2.x} cy={p2.y} r={PORT_SIZE / 2} fill="#8000ee" />
     </svg>
   );
 };
