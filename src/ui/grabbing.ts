@@ -28,10 +28,9 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
 
       const { start } = grabbing.value;
 
-      const delta = new Vec2(
-        event.pageX / GRID_SIZE_UNIT,
-        event.pageY / GRID_SIZE_UNIT,
-      ).minus(start);
+      const delta = new Vec2(event.pageX, event.pageY)
+        .scale(1 / GRID_SIZE_UNIT)
+        .minus(start);
       grabbing.value = { ...grabbing.value, delta };
     };
 
@@ -68,10 +67,7 @@ export function startMove(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
-  const start = new Vec2(
-    event.pageX / GRID_SIZE_UNIT,
-    event.pageY / GRID_SIZE_UNIT,
-  );
+  const start = new Vec2(event.pageX, event.pageY).scale(1 / GRID_SIZE_UNIT);
   this.value = { start, delta: null, type: "node", id };
 }
 
@@ -82,10 +78,7 @@ export function startGrabPort(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
-  const start = new Vec2(
-    event.pageX / GRID_SIZE_UNIT,
-    event.pageY / GRID_SIZE_UNIT,
-  );
+  const start = new Vec2(event.pageX, event.pageY).scale(1 / GRID_SIZE_UNIT);
 
   let delta = null;
 
