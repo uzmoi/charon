@@ -1,5 +1,6 @@
+import { useSignal } from "@preact/signals";
 import { useState } from "preact/hooks";
-import { Charon, type Action } from "../core";
+import { Charon, type Action, type BoxSize } from "../core";
 import styles from "./canvas.module.scss";
 import { EdgeCanvas } from "./edge-canvas";
 import { GrabbingEdge } from "./grabbing-edge";
@@ -17,8 +18,26 @@ export const CharonCanvas: preact.FunctionComponent<{
     charon.addNode(type);
   };
 
+  const canvasSize = useSignal<BoxSize>({ width: 0, height: 0 });
+
+  const canvasRef = (canvasEl: HTMLDivElement | null) => {
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        canvasSize.value = entry.contentRect;
+      }
+    });
+
+    if (canvasEl != null) {
+      observer.observe(canvasEl);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  };
+
   return (
-    <div class={styles.canvas}>
+    <div class={styles.canvas} ref={canvasRef}>
       <div class={styles.header}>
         <NodeTypeSelector
           types={actions.map(action => action.name)}
@@ -26,7 +45,7 @@ export const CharonCanvas: preact.FunctionComponent<{
         />
       </div>
       <div class={styles.edges}>
-        <EdgeCanvas {...{ charon, grabbing }} />
+        <EdgeCanvas {...{ charon, canvasSize, grabbing }} />
       </div>
       <GrabbingEdge {...{ charon, grabbing }} />
       <div class={styles.nodes}>
