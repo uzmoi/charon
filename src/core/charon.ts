@@ -14,6 +14,10 @@ export class Charon {
     this.#actions = new Map(actions.map(action => [action.name, action]));
   }
 
+  getActions(): string[] {
+    return this.#actions.keys().toArray();
+  }
+
   #nodes = new Map<NodeId, Node>();
 
   #$nodes = signal<Node[]>([]);
