@@ -2,7 +2,7 @@ import { useComputed, useSignal } from "@preact/signals";
 import { Charon, type BoxSize, type ReadonlyVec2 } from "../core";
 import styles from "./canvas.module.scss";
 import { GRID_SIZE_UNIT } from "./constants";
-import { EdgeCanvas } from "./edge-canvas";
+import { CharonEdge } from "./edge";
 import { GrabbingEdge } from "./grabbing-edge";
 import { startCanvasMove, useGrabbingSignal } from "./grabbing";
 import { CharonNode } from "./node";
@@ -36,6 +36,11 @@ export const CharonCanvas: preact.FunctionComponent<{
     };
   };
 
+  const viewBox = useComputed(() => {
+    const { width, height } = canvasSize.value;
+    return `0 0 ${width / GRID_SIZE_UNIT} ${height / GRID_SIZE_UNIT}`;
+  });
+
   const style = useComputed(() => {
     let { x, y } = canvasPos.value;
     if (grabbing.value?.delta && grabbing.value.type === "canvas") {
@@ -55,7 +60,11 @@ export const CharonCanvas: preact.FunctionComponent<{
         <NodeTypeSelector types={charon.getActions()} selectType={addNode} />
       </div>
       <div class={styles.edges}>
-        <EdgeCanvas {...{ charon, canvasSize, grabbing, canvasPos }} />
+        <svg width="100%" height="100%" viewBox={viewBox}>
+          {charon.edges().map(edge => (
+            <CharonEdge key={edge.key} {...{ edge, grabbing, canvasPos }} />
+          ))}
+        </svg>
       </div>
       <GrabbingEdge {...{ charon, grabbing, canvasPos }} />
       <div class={styles.nodes} onPointerDown={startCanvasMove.bind(grabbing)}>
