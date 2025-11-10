@@ -13,13 +13,17 @@ import { GRID_SIZE_UNIT } from "./constants";
 
 export type GrabbingSignal = Signal<
   | ({ start: ReadonlyVec2; delta: ReadonlyVec2 | null } & (
+      | { type: "canvas" }
       | { type: "node"; id: NodeId }
       | { type: "port"; port: Port }
     ))
   | undefined
 >;
 
-export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
+export const useGrabbingSignal = (
+  charon: Charon,
+  canvasPos: Signal<ReadonlyVec2>,
+): GrabbingSignal => {
   const grabbing = useSignal<GrabbingSignal["value"]>();
 
   useEffect(() => {
@@ -42,6 +46,11 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
       if (state.type === "port") {
         // 最近傍ポートに接続
         connectToNearestPort(charon, state.port, state.delta);
+      } else if (state.type === "canvas") {
+        canvasPos.value = {
+          x: canvasPos.value.x + state.delta.x,
+          y: canvasPos.value.y + state.delta.y,
+        };
       } else {
         charon.node(state.id)?.move({
           x: Math.round(state.delta.x),
@@ -61,12 +70,22 @@ export const useGrabbingSignal = (charon: Charon): GrabbingSignal => {
   return grabbing;
 };
 
-export function startMove(
+export function startCanvasMove(
+  this: GrabbingSignal,
+  event: preact.TargetedPointerEvent<HTMLElement>,
+): void {
+  event.preventDefault();
+  const start = new Vec2(event.pageX, event.pageY).scale(1 / GRID_SIZE_UNIT);
+  this.value = { start, delta: null, type: "canvas" };
+}
+
+export function startNodeMove(
   this: GrabbingSignal,
   id: NodeId,
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
+  event.stopPropagation();
   const start = new Vec2(event.pageX, event.pageY).scale(1 / GRID_SIZE_UNIT);
   this.value = { start, delta: null, type: "node", id };
 }
@@ -78,6 +97,7 @@ export function startGrabPort(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
+  event.stopPropagation();
   const start = new Vec2(event.pageX, event.pageY).scale(1 / GRID_SIZE_UNIT);
 
   let delta = null;

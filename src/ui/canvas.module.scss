@@ -21,11 +21,23 @@
   background-image: grid(45deg), grid(135deg), grid(45deg), grid(135deg);
   background-size: constants.$grid-size * 2 constants.$grid-size * 2;
   background-repeat: repeat;
+  @function bg-pos($x, $y) {
+    @if $x == 0 {
+      $x: var(--bg-pos-x);
+    } @else {
+      $x: calc(var(--bg-pos-x) + $x);
+    }
+    @if $y == 0 {
+      $y: var(--bg-pos-y);
+    } @else {
+      $y: calc(var(--bg-pos-y) + $y);
+    }
+    @return $x $y;
+  }
   background-position:
-    0 0,
-    constants.$grid-size 0,
-    constants.$grid-size constants.$grid-size,
-    0 constants.$grid-size;
+    bg-pos(0, 0), bg-pos(constants.$grid-size, 0),
+    bg-pos(constants.$grid-size, constants.$grid-size),
+    bg-pos(0, constants.$grid-size);
 
   position: relative;
 }

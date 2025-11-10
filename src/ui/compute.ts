@@ -1,3 +1,4 @@
+import type { Signal } from "@preact/signals";
 import {
   Vec2,
   type Edge,
@@ -42,16 +43,18 @@ export const computeGrabbingDelta = (
   { value: grabbing }: GrabbingSignal,
   nodeId: NodeId,
 ): ReadonlyVec2 => {
-  if (
-    grabbing?.delta != null &&
-    grabbing.type === "node" &&
-    grabbing.id === nodeId
-  ) {
-    const { x, y } = grabbing.delta;
-    return {
-      x: Math.round(x),
-      y: Math.round(y),
-    };
+  if (grabbing?.delta != null) {
+    if (grabbing.type === "canvas") {
+      return grabbing.delta;
+    }
+
+    if (grabbing.type === "node" && grabbing.id === nodeId) {
+      const { x, y } = grabbing.delta;
+      return {
+        x: Math.round(x),
+        y: Math.round(y),
+      };
+    }
   }
 
   return { x: 0, y: 0 };
@@ -60,9 +63,16 @@ export const computeGrabbingDelta = (
 export const computeEdgePathWithGrabbingDelta = (
   { from, to }: Edge,
   { value: grabbing }: GrabbingSignal,
+  { value: canvasPos }: Signal<ReadonlyVec2>,
 ) => {
-  let p1 = computePortPos(from);
-  let p2 = computePortPos(to);
+  let p1 = computePortPos(from).plus(canvasPos);
+  let p2 = computePortPos(to).plus(canvasPos);
+
+  if (grabbing?.delta && grabbing.type === "canvas") {
+    const { delta } = grabbing;
+    p1.plus(delta);
+    p2.plus(delta);
+  }
 
   if (grabbing?.delta && grabbing.type === "node") {
     const { id, delta } = grabbing;

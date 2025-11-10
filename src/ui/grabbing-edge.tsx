@@ -1,4 +1,5 @@
-import type { Charon } from "../core";
+import type { Signal } from "@preact/signals";
+import type { Charon, ReadonlyVec2 } from "../core";
 import { computePortPos, edgePath } from "./compute";
 import { computePosOfPortToConnect } from "./connect";
 import { PORT_SIZE } from "./constants";
@@ -8,7 +9,8 @@ import type { GrabbingSignal } from "./grabbing";
 export const GrabbingEdge: preact.FunctionComponent<{
   charon: Charon;
   grabbing: GrabbingSignal;
-}> = ({ charon, grabbing }) => {
+  canvasPos: Signal<ReadonlyVec2>;
+}> = ({ charon, grabbing, canvasPos }) => {
   if (grabbing.value?.type !== "port") return null;
 
   const { port, delta } = grabbing.value;
@@ -17,6 +19,10 @@ export const GrabbingEdge: preact.FunctionComponent<{
   const p1 = computePortPos(port);
   const p2 = p1.clone().plus(delta);
   const p3 = computePosOfPortToConnect(charon, port, p2);
+
+  p1.plus(canvasPos.value);
+  p2.plus(canvasPos.value);
+  p3?.plus(canvasPos.value);
 
   const maxX = Math.ceil(Math.max(p1.x, p2.x, p3?.x ?? 0) + 0.5);
   const maxY = Math.ceil(Math.max(p1.y, p2.y, p3?.y ?? 0) + 0.5);
