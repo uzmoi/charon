@@ -1,13 +1,9 @@
 import {
   distance,
-  inputPorts,
   nearest,
-  outputPorts,
   portType,
   type Charon,
-  type InputPort,
   type Node,
-  type OutputPort,
   type Port,
   type ReadonlyVec2,
   type Vec2,
@@ -22,15 +18,16 @@ const computePortToConnect = (
 ): Port | null => {
   const type = portType(port);
 
-  const getPorts: (node: Node) => Port[] = {
-    in: outputPorts,
-    out: inputPorts,
-  }[port.kind];
-
   const ports = charon
     .nodes()
+    .values()
     .filter(node => node !== port.node)
-    .flatMap(getPorts)
+    .flatMap(
+      {
+        in: (node: Node): Iterable<Port> => node.outputs(),
+        out: (node: Node): Iterable<Port> => node.inputs(),
+      }[port.kind],
+    )
     .filter(port => portType(port) === type);
 
   const distanceToPort = (port: Port) => {
@@ -61,11 +58,11 @@ export const connectToNearestPort = (
   if (portToConnect) {
     switch (port.kind) {
       case "in": {
-        charon.connectNodes(portToConnect as OutputPort, port);
+        charon.connectNodes(portToConnect as Port<"out">, port as Port<"in">);
         break;
       }
       case "out": {
-        charon.connectNodes(port, portToConnect as InputPort);
+        charon.connectNodes(port as Port<"out">, portToConnect as Port<"in">);
         break;
       }
     }

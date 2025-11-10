@@ -1,6 +1,7 @@
 import { type Signal, signal } from "@preact/signals";
 import type { Brand } from "@uzmoi/ut/types";
 import type { Action } from "./action";
+import type { Port } from "./port";
 import type { BoxSize } from "./types";
 import type { ReadonlyVec2 } from "./vec2";
 
@@ -21,5 +22,17 @@ export class Node {
       x: x + Math.floor(delta.x),
       y: y + Math.floor(delta.y),
     };
+  }
+
+  *inputs(): Generator<Port<"in">, void> {
+    for (const name of this.action.input.keys()) {
+      yield { node: this, kind: "in", name };
+    }
+  }
+
+  *outputs(): Generator<Port<"out">, void> {
+    for (const name of this.action.output.keys()) {
+      yield { node: this, kind: "out", name };
+    }
   }
 }

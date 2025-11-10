@@ -1,14 +1,7 @@
 import { type Signal, useComputed } from "@preact/signals";
 import { GripVerticalIcon, MenuIcon, TrashIcon } from "lucide-preact";
 import { memo } from "preact/compat";
-import {
-  inputPorts,
-  outputPorts,
-  portType,
-  type Charon,
-  type Node,
-  type ReadonlyVec2,
-} from "../core";
+import { portType, type Charon, type Node, type ReadonlyVec2 } from "../core";
 import { computeGrabbingDelta } from "./compute";
 import { GRID_SIZE_UNIT } from "./constants";
 import { startGrabPort, startNodeMove, type GrabbingSignal } from "./grabbing";
@@ -70,7 +63,7 @@ export const CharonNode: preact.FunctionComponent<{
       </div>
       <div class={styles.body}>
         <div class={styles.input}>
-          {inputPorts(node).map(port => (
+          {[...node.inputs()].map(port => (
             <div key={port.name} class={styles.port}>
               <div
                 class={styles.port_circle}
@@ -82,7 +75,7 @@ export const CharonNode: preact.FunctionComponent<{
           ))}
         </div>
         <div class={styles.output}>
-          {outputPorts(node).map(port => (
+          {[...node.outputs()].map(port => (
             <div key={port.name} class={styles.port}>
               <div
                 class={styles.port_circle}
