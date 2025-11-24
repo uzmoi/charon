@@ -34,7 +34,13 @@ export const CharonNode: preact.FunctionComponent<{
   });
 
   return (
-    <div class={styles.node} style={style}>
+    <div
+      class={styles.node}
+      style={style}
+      onPointerDown={event => {
+        event.stopPropagation();
+      }}
+    >
       <div class={styles.header}>
         <p class={styles.action_name}>{node.action.name}</p>
         <div>

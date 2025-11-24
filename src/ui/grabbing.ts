@@ -85,7 +85,6 @@ export function startNodeMove(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
-  event.stopPropagation();
   const start = new Vec2(event.pageX, event.pageY).scale(1 / GRID_SIZE_UNIT);
   this.value = { start, delta: null, type: "node", id };
 }
@@ -97,7 +96,6 @@ export function startGrabPort(
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
-  event.stopPropagation();
   const start = new Vec2(event.pageX, event.pageY).scale(1 / GRID_SIZE_UNIT);
 
   let delta = null;
