@@ -40,8 +40,8 @@ export const useGrabbingSignal = (
 
     const onPointerUp = (_event: PointerEvent): void => {
       const state = grabbing.value;
-      if (state?.delta == null) return;
       grabbing.value = undefined;
+      if (state?.delta == null) return;
 
       if (state.type === "port") {
         // 最近傍ポートに接続
