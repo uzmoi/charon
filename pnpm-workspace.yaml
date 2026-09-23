@@ -1,2 +1,8 @@
-onlyBuiltDependencies:
-  - lefthook
+allowBuilds:
+  "@parcel/watcher": false
+  lefthook: true
+
+minimumReleaseAge: 10080 # 1 week
+
+publicHoistPattern:
+  - "@typescript/*"
