@@ -1,4 +1,4 @@
-import type { Action } from "../core";
+import { Action } from "../core";
 import type { CharonType, CharonTypeOf } from "./type";
 
 type MapCharonType<T extends Record<string, CharonType>> = {
@@ -24,9 +24,7 @@ export const defineAction = <
 >(
   action: DefineAction<Input, Output>,
 ): Action =>
-  ({
-    name: action.name,
-    input: new Map(Object.entries(action.input)),
-    output: new Map(Object.entries(action.output)),
-    action: action.action as unknown as Action["action"],
-  }) as Action;
+  new Action(action.name, action.action as unknown as Action["action"], {
+    input: action.input,
+    output: action.output,
+  });

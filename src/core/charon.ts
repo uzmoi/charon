@@ -1,7 +1,8 @@
 import { signal } from "@preact/signals";
+import type { Action } from "./action";
 import { Node, type NodeId } from "./node";
 import type { Port } from "./port";
-import type { Action, Edge } from "./types";
+import type { Edge } from "./types";
 
 export class Charon {
   readonly #actions: ReadonlyMap<string, Action>;
