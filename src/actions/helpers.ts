@@ -1,13 +1,14 @@
-import { Action } from "../core";
-import type { CharonType, CharonTypeOf } from "./type";
+import { Action, type CharonSchema, type CharonValueType } from "../core";
 
-type MapCharonType<T extends Record<string, CharonType>> = {
-  [P in keyof T]: CharonTypeOf<T[P]>;
+export { t } from "../core";
+
+type MapCharonType<T extends Record<string, CharonSchema>> = {
+  [P in keyof T]: CharonValueType<T[P]>;
 };
 
 interface DefineAction<
-  Input extends Record<string, CharonType>,
-  Output extends Record<string, CharonType>,
+  Input extends Record<string, CharonSchema>,
+  Output extends Record<string, CharonSchema>,
 > {
   name: string;
   input: Input;
@@ -19,8 +20,8 @@ interface DefineAction<
 }
 
 export const defineAction = <
-  Input extends Record<string, CharonType>,
-  Output extends Record<string, CharonType>,
+  Input extends Record<string, CharonSchema>,
+  Output extends Record<string, CharonSchema>,
 >(
   action: DefineAction<Input, Output>,
 ): Action =>

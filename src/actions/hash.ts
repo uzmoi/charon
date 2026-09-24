@@ -11,8 +11,7 @@ import {
   createXXHash64,
   type IHasher,
 } from "hash-wasm";
-import { defineAction } from "./helpers";
-import { t } from "./type";
+import { defineAction, t } from "./helpers";
 
 type SubtleCryptoAlgorithm = "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512";
 

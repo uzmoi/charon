@@ -2,6 +2,7 @@ export { Action } from "./action";
 export { Charon } from "./charon";
 export type { NodeId, Node } from "./node";
 export * from "./port";
+export * from "./schema";
 export type { BoxSize, Edge } from "./types";
 export { distance, nearest } from "./utils";
 export * from "./vec2";

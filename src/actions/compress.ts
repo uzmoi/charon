@@ -1,7 +1,6 @@
 import { Zstd } from "@hpcc-js/wasm-zstd";
 import * as brotli from "brotli-wasm";
-import { defineAction } from "./helpers";
-import { t } from "./type";
+import { defineAction, t } from "./helpers";
 
 const pipeStream = async (
   data: ArrayBuffer,
