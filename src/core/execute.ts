@@ -2,24 +2,9 @@ import { getOrElseUpdate } from "@uzmoi/ut/ils";
 import { mapValues } from "es-toolkit/map";
 import type { Charon } from "./charon";
 import type { Node, NodeId } from "./node";
-import type { Port } from "./port";
 import { parse, type CharonValue } from "./schema";
 
 type NodeResult = Record<string, CharonValue>;
-
-const getNodeDependenciesMap = (charon: Charon) => {
-  const map = new Map<Node, Map<string, Port<"out">>>();
-
-  for (const node of charon.nodes()) {
-    map.set(node, new Map());
-  }
-
-  for (const { from, to } of charon.edges()) {
-    map.get(to.node)!.set(to.name, from);
-  }
-
-  return map;
-};
 
 export const execute = (charon: Charon): Map<NodeId, Promise<NodeResult>> => {
   const promiseMap = new Map<NodeId, PromiseWithResolvers<NodeResult>>();
@@ -27,12 +12,12 @@ export const execute = (charon: Charon): Map<NodeId, Promise<NodeResult>> => {
   const getPromiseWithResolvers = (nodeId: NodeId) =>
     getOrElseUpdate(promiseMap, nodeId, () => Promise.withResolvers());
 
-  for (const [node, dependencies] of getNodeDependenciesMap(charon)) {
+  for (const node of charon.nodes()) {
     const { resolve } = getPromiseWithResolvers(node.id);
 
     resolve(
       executeNode(node, async inputPortName => {
-        const sourceOutputPort = dependencies.get(inputPortName);
+        const sourceOutputPort = node.getSource(inputPortName);
         if (sourceOutputPort == null) return;
 
         const nodeOutput = await getPromiseWithResolvers(

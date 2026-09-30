@@ -92,7 +92,7 @@ export function startNodeMove(
 export function startGrabPort(
   this: GrabbingSignal,
   charon: Charon,
-  port: Port,
+  port: Port<"in"> | Port<"out">,
   event: preact.TargetedPointerEvent<HTMLElement>,
 ): void {
   event.preventDefault();
@@ -100,13 +100,15 @@ export function startGrabPort(
 
   let delta = null;
 
-  const disconnectedPort = charon.disconnect(port);
+  if (port.kind === "in") {
+    const disconnectedPort = charon.disconnect(port);
 
-  if (disconnectedPort) {
-    // 既存のedgeを引っ張る
-    delta = computePortPos(port).minus(computePortPos(disconnectedPort));
-    start.minus(delta);
-    port = disconnectedPort;
+    if (disconnectedPort) {
+      // 既存のedgeを引っ張る
+      delta = computePortPos(port).minus(computePortPos(disconnectedPort));
+      start.minus(delta);
+      port = disconnectedPort;
+    }
   }
 
   this.value = { start, delta, type: "port", port };

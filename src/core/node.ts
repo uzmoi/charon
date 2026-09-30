@@ -16,6 +16,23 @@ export class Node {
 
   constructor(readonly action: Action) {}
 
+  readonly #deps: Signal<Record<string, Port<"out">>> = signal({});
+  get deps() {
+    return this.#deps.value;
+  }
+
+  getSource(name: string): Port<"out"> | undefined {
+    return this.#deps.value[name];
+  }
+
+  setSource(name: string, source: Port<"out">): void {
+    this.#deps.value = { ...this.#deps.peek(), [name]: source };
+  }
+
+  unsetSource(name: string): void {
+    this.#deps.value = omit(this.#deps.peek(), [name]);
+  }
+
   move(delta: ReadonlyVec2) {
     const { x, y } = this.pos.value;
     this.pos.value = {
