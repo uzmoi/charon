@@ -190,6 +190,9 @@ importers:
       preact:
         specifier: ^10.27.2
         version: 10.29.8
+      valibot:
+        specifier: ^1.5.0
+        version: 1.5.0(typescript@7.0.2)
     devDependencies:
       '@preact/preset-vite':
         specifier: ^2.10.2
@@ -1710,6 +1713,14 @@ packages:
     peerDependencies:
       browserslist: '>= 4.21.0'
 
+  valibot@1.5.0:
+    resolution: {integrity: sha512-nil6AkP2TChWL43Z5uJ6GTxX01CUA+g8LWUM+N/rB9NBbkUMaUsi9PUNzlUPgoKASgmx9f7eGOYpJ04/fSa6FQ==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   varint@6.0.0:
     resolution: {integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==}
 
@@ -3133,6 +3144,10 @@ snapshots:
       browserslist: 4.29.0
       escalade: 3.2.0
       picocolors: 1.1.1
+
+  valibot@1.5.0(typescript@7.0.2):
+    optionalDependencies:
+      typescript: 7.0.2
 
   varint@6.0.0: {}
 

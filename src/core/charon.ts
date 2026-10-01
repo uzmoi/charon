@@ -19,6 +19,14 @@ export class Charon {
     return this.#actions.keys().toArray();
   }
 
+  getAction(actionName: string): Action {
+    const action = this.#actions.get(actionName);
+    if (action == null) {
+      throw new TypeError(`Unknown action name: ${actionName}`);
+    }
+    return action;
+  }
+
   #nodes = new Map<NodeId, Node>();
 
   #$nodes = signal<Node[]>([]);
@@ -42,12 +50,9 @@ export class Charon {
   }
 
   addNode(actionName: string): Node {
-    const action = this.#actions.get(actionName);
-    if (action == null) {
-      throw new TypeError();
-    }
+    const action = this.getAction(actionName);
 
-    const newNode = new Node(action);
+    const newNode = new Node(Node.randId(), action);
 
     this.#nodes.set(newNode.id, newNode);
     this.#update();
@@ -69,5 +74,53 @@ export class Charon {
     const outPort = port.node.getSource(port.name);
     port.node.unsetSource(port.name);
     return outPort;
+  }
+
+  import(json: string) {
+    const data = JSON.parse(json) as { nodes: unknown[] };
+    const nodes = data.nodes.map(Node.parse);
+
+    // インポートするノードのidのマップ
+    // 既存のノードとidが被っていたらランダムに再割当て
+    const importingNodeIdMap = new Map(
+      nodes.map(node => [
+        node.id,
+        this.#nodes.has(node.id) ? Node.randId() : node.id,
+      ]),
+    );
+
+    for (const node_ of nodes) {
+      const action = this.getAction(node_.action);
+      const id = importingNodeIdMap.get(node_.id)!;
+      const node = new Node(id, action);
+      node.pos.value = node_.pos;
+
+      this.#nodes.set(id, node);
+    }
+
+    for (const node_ of nodes) {
+      const id = importingNodeIdMap.get(node_.id)!;
+      const node = this.#nodes.get(id)!;
+      for (const [portName, [rawSourceNodeId, sourcePort]] of Object.entries(
+        node_.deps,
+      )) {
+        const sourceNodeId = importingNodeIdMap.get(rawSourceNodeId);
+        if (sourceNodeId == null) {
+          throw new Error("Invalid node id");
+        }
+        node.setSource(portName, {
+          kind: "out",
+          node: this.#nodes.get(sourceNodeId)!,
+          name: sourcePort,
+        });
+      }
+    }
+
+    this.#update();
+  }
+
+  export() {
+    const nodes = this.nodes();
+    return JSON.stringify({ nodes });
   }
 }
